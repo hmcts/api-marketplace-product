@@ -23,9 +23,13 @@ Notification (For PCN & NOWs) :doc-api-notifications, 2026-03-01, 90d
 Iteration of API contents (to be define) :doc-api-iteration, 2026-07-15, 90d
 Decommission HMPPS PCN & NOWs emails:doc-api-data-decomm-emails, 2027-02-20, 40d
 
-section Case Court Hearing API
-VP additional data items :court-api-vp-additions, 2026-04-01, 30d
-Onboard HMPPS to Court API :court-api-onboarding-hmpps, 2026-07-01, 30d
+
+section Court data APIs
+Court data requirements agreed with HMPPS :court-api-hmpps-requirements-agreed, 2026-03-03, 20d
+Court APIs contract designed and published :court-api-contract-design-publish, 2026-05-01, 30d
+Court APIs implementation and release :court-api-implementation, 2026-06-01, 45d
+HMPPS onboarding to Court APIs :court-api-hmpps-onboarding, after court-api-implementation, 5d
+
 
 section Data Sharing
 Define existing and recommendations: amp-data-sharing, 2026-02-15, 45d
@@ -42,9 +46,12 @@ Tooling delivery and onboarding processes : after amp-tooling, 30d
 section Onboard New Jurisdiction
 Subscription API CFT Case History events (design, collaborate, prove, integrate) :hmcts-new-jurisdiction, 2026-07-01, 90d
 
-section Handover Pathfinder APIs
+section Case Court Hearing API
+VP additional data items :court-api-vp-additions, 2026-04-01, 30d
+Handover to Hearing Domain :amp-court-api-hearing, 2026-09-01, 15d
+
+section Handover Pathfinder APIs & Templates
 SpringBoot templates to Plat. Eng. :amp-springboot-pe, 2026-05-01, 30d
-Case Court API to Hearing Domain :amp-court-api-hearing, 2026-09-01, 15d
 Scheduling API to S&L Domain :amp-scheduling-api-snl, 2026-09-08, 15d
 
 section Migration to API Marketplace
