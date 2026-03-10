@@ -4,59 +4,66 @@ The API Marketplace (AMp) is a self-serve marketplace for publishing, discoverin
 
 ## Roadmap
 
-The roadmap below outlines the key milestones and deliverables for the API Marketplace product over Financial Year 26/27. 
-It includes the development of new APIs, onboarding of new jurisdictions, and migration of existing APIs to the marketplace. 
-The timeline is subject to change based on priorities.
+The detailed roadmap is maintained in [`specs/product/roadmap.md`](specs/product/roadmap.md).
 
-```mermaid
-gantt
-title API Marketplace (AMp) Roadmap
-dateFormat  YYYY-MM-DD
+## Spec-Driven Structure
 
-section  
-Q4 FY25/26 :milestone, quarter-fy25-q4, 2026-01-01, 0d
-Q1 FY26/27 :milestone, quarter-fy26-q1, 2026-04-01, 0d
-Q2 FY26/27 :milestone, quarter-fy26-q2, 2026-07-01, 0d
-Q3 FY26/27 :milestone, quarter-fy26-q3, 2026-10-01, 0d
-Q4 FY26/27 :milestone, quarter-fy26-q4, 2027-01-01, 0d
+The repository is organised to keep product intent, feature specs, acceptance criteria, delivery tasks, and implementation evidence connected:
 
-%% Get Court Data - HMPPS Document API
-section Subscription API: Case Results
-Subscription API (design, collaborate, prove, integrate) :doc-api-dcpi, 2026-01-01, 90d
-Consumer (HMPPS) Connectivity :doc-api-connectivity, 2026-02-01, 59d
-Notification (For PCN & NOWs) :doc-api-notifications, 2026-03-01, 90d
-Iteration of API contents (to be define) :doc-api-iteration, 2026-07-15, 90d
-Decommission HMPPS PCN & NOWs emails:doc-api-data-decomm-emails, 2027-02-20, 40d
-
-section Case Court Hearing API
-VP additional data items :court-api-vp-additions, 2026-04-01, 30d
-%% Get Court Data - re. MVP Court data API
-Onboard HMPPS to Court API :court-api-onboarding-hmpps, 2026-07-01, 30d
-
-section Data Sharing
-Define existing and recommendations: amp-data-sharing, 2026-02-15, 45d
-Document new self service process: amp-doc-self-service, 2026-04-01, 15d
-
-section AMp Foundations
-AMp Principles : amp-principles, 2026-01-25, 15d
-Spike EntraID and multiple IDPs :amp-entra-spike, 2026-04-01, 30d
-Infra Foundations (PlatOps collaboration) :amp-infra-foundations, 2026-04-01, 90d
-Move Crime Pathfinder APIs from CP to CNP :amp-migration, 2026-06-15, 90d
-Tooling analysis and spikes : amp-tooling, 2026-04-01, 15d
-Tooling delivery and onboarding processes : after amp-tooling, 30d
-
-section Onboard New Jurisdiction
-Subscription API CFT Case History events (design, collaborate, prove, integrate) :hmcts-new-jurisdiction, 2026-07-01, 90d
-
-section Handover Pathfinder APIs
-SpringBoot templates to Plat. Eng. :amp-springboot-pe, 2026-05-01, 30d
-Case Court API to Hearing Domain :amp-court-api-hearing, 2026-09-01, 15d
-Scheduling API to S&L Domain :amp-scheduling-api-snl, 2026-09-08, 15d
-
-section Migration to API Marketplace
-Design, Publish Guidance with timelines and API migration roadmap :hmcts-new-jurisdiction, 2026-10-01, 90d
+```text
+specs/
+  product/      # vision, principles, roadmap
+  domains/      # domain context and glossary
+  features/     # feature-level specs (spec, acceptance, tasks, evidence)
+  recipes/      # reusable AMp design patterns ("recipes")
+  adr/          # architecture decision records
+openspec/       # OpenSpec CLI artifacts (validated specs + change proposals)
+tools/openspec/ # OpenSpec config and templates
+docs/           # supplementary documentation
 ```
 
+## OpenSpec CLI
+
+If this repository is managed with OpenSpec, keep capability specs in `openspec/specs` and validate them as part of changes.
+
+Install [OpenSpec](https://openspec.dev/) CLI:
+
+```bash
+npm install -g @fission-ai/openspec
+```
+
+Validate specifications:
+
+```bash
+openspec validate --specs --no-interactive
+```
+
+Validate specs and active change proposals:
+
+```bash
+openspec validate --all --no-interactive
+```
+
+## API Standards
+
+API design and implementation should align with HMCTS engineering guidance:
+
+- HMCTS engineering: [The HMCTS way](https://hmcts.github.io)
+- HMCTS API practices: [Standards::Practices::APIs](https://hmcts.github.io/standards/practices/apis.html)
+
+Useful external reference (not AMp-specific):
+
+- HMCTS Spring Boot demo service: [https://github.com/hmcts/service-hmcts-springboot-demo](https://github.com/hmcts/service-hmcts-springboot-demo)
+
+## Key Links
+
+- Product roadmap: [`specs/product/roadmap.md`](specs/product/roadmap.md)
+- Product vision: [`specs/product/vision.md`](specs/product/vision.md)
+- Product principles: [`specs/product/principles.md`](specs/product/principles.md)
+- AMp recipes: [`specs/recipes/README.md`](specs/recipes/README.md)
+- Repo structure ADR: [`specs/adr/ADR-0001-repo-structure.md`](specs/adr/ADR-0001-repo-structure.md)
+- OpenSpec workspace: [`openspec/README.md`](openspec/README.md)
+- OpenSpec config: [`tools/openspec/config.yaml`](tools/openspec/config.yaml)
 
 ## License
 
