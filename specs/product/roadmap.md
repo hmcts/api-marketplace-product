@@ -8,8 +8,9 @@ The timeline is subject to change based on priorities.
 gantt
 title API Marketplace (AMp) Roadmap
 dateFormat  YYYY-MM-DD
+axisFormat %b %Y
 
-section Quarterly milestones
+section _
 Q4 FY25/26 :milestone, quarter-fy25-q4, 2026-01-01, 0d
 Q1 FY26/27 :milestone, quarter-fy26-q1, 2026-04-01, 0d
 Q2 FY26/27 :milestone, quarter-fy26-q2, 2026-07-01, 0d
