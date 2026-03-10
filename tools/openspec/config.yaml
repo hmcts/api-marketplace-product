@@ -1,0 +1,6 @@
+version: 1
+specRoot: specs
+featuresGlob: specs/features/**/spec.md
+acceptanceFile: acceptance.md
+tasksFile: tasks.md
+evidenceFile: evidence.md
