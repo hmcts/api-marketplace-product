@@ -25,8 +25,8 @@ Consistent standards are essential for adoption, usability, and long‑term main
 All APIs published through the Marketplace adhere to clear, well-defined standards, including:
 
 * Contract-first design – API contracts are defined, reviewed, and agreed upon before implementation.
-* Lifecycle management – Every API has a named owner and a transparent lifecycle from publication through versioning to deprecation. 
-* Documentation standards – APIs are documented clearly and consistently to support rapid onboarding. 
+* Lifecycle management – Every API has a named owner and a transparent lifecycle from publication through versioning to deprecation.
+* Documentation standards – APIs are documented clearly and consistently to support rapid onboarding.
 * Versioning and compatibility – Changes are managed in a predictable way to minimise disruption to consumers.
 
 ## 5. Enable product teams to own and scale independently

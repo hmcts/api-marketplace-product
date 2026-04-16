@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted
+Superseded by [ADR-0002](ADR-0002-playbook-restructure.md)
 
 ## Context
 
