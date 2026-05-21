@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HMCTS API Marketplace — Discovery Report</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/govuk-frontend@5.4.0/dist/govuk/govuk-frontend.min.css">
+<style>
+@font-face {
+  font-family: "GDS Transport";
+  src: url("https://cdn.jsdelivr.net/npm/govuk-frontend@5.4.0/dist/govuk/assets/fonts/light-94a07e06a1-v2.woff2") format("woff2");
+  font-weight: 300; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "GDS Transport";
+  src: url("https://cdn.jsdelivr.net/npm/govuk-frontend@5.4.0/dist/govuk/assets/fonts/bold-b542beb274-v2.woff2") format("woff2");
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+
+:root {
+  --amp-bg:        #ffffff;
+  --amp-fg:        #0b0c0c;
+  --amp-muted:     #505a5f;
+  --amp-border:    #b1b4b6;
+  --amp-light:     #f3f2f1;
+  --amp-blue:      #1d70b8;
+  --amp-blue-dark: #003078;
+  --amp-yellow:    #fd0;
+  --amp-green:     #00703c;
+  --amp-red:       #d4351c;
+  --amp-purple:    #4c2c92;
+  --sidebar-w:     320px;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+body {
+  font-family: "GDS Transport", arial, sans-serif;
+  font-size: 16px; line-height: 1.55;
+  color: var(--amp-fg);
+  background: var(--amp-bg);
+  margin: 0;
+}
+
+/* --- Header --- */
+.amp-header { background: #0b0c0c; border-bottom: 4px solid var(--amp-blue); color: #fff; }
+.amp-header__inner {
+  max-width: 1400px; margin: 0 auto; padding: 14px 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+}
+.amp-header__title { font-weight: 700; font-size: 18px; line-height: 1.2; }
+.amp-header__title small { display: block; font-weight: 400; font-size: 13px; opacity: 0.7; margin-top: 2px; }
+.amp-header__meta { font-size: 13px; opacity: 0.8; display: flex; gap: 16px; flex-wrap: wrap; }
+
+/* Phase banner */
+.amp-phase { background: var(--amp-blue); color: #fff; padding: 8px 0; font-size: 14px; }
+.amp-phase__inner { max-width: 1400px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 12px; }
+.amp-phase__tag { background: #fff; color: var(--amp-blue); font-weight: 700; padding: 2px 8px; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
+
+/* --- Layout --- */
+.amp-layout {
+  max-width: 1400px; margin: 0 auto; padding: 0 24px;
+  display: grid; grid-template-columns: var(--sidebar-w) 1fr; gap: 32px;
+  align-items: start;
+}
+
+/* --- Sidebar / TOC --- */
+.amp-sidebar {
+  position: sticky; top: 0;
+  height: 100vh; overflow-y: auto;
+  padding: 24px 0 24px 0;
+  border-right: 1px solid var(--amp-border);
+}
+.amp-sidebar__search {
+  position: sticky; top: 0; background: var(--amp-bg); padding-bottom: 12px; z-index: 2;
+  border-bottom: 1px solid var(--amp-light); margin-bottom: 12px;
+}
+.amp-sidebar__search input {
+  width: 100%; padding: 8px 10px; font: inherit; font-size: 14px;
+  border: 2px solid var(--amp-border); background: #fff;
+}
+.amp-sidebar__search input:focus { outline: 3px solid var(--amp-yellow); outline-offset: 0; border-color: var(--amp-fg); }
+
+.toc { list-style: none; padding: 0; margin: 0; font-size: 14px; }
+.toc li { line-height: 1.35; }
+.toc a {
+  display: block; text-decoration: none; color: var(--amp-fg);
+  padding: 6px 8px 6px 12px; border-left: 3px solid transparent;
+}
+.toc a:hover { background: var(--amp-light); }
+.toc a.active { border-left-color: var(--amp-blue); background: var(--amp-light); font-weight: 700; color: var(--amp-blue-dark); }
+.toc__h2 a { font-weight: 700; padding-left: 12px; margin-top: 8px; }
+.toc__h3 a { font-weight: 400; padding-left: 28px; font-size: 13px; color: var(--amp-muted); }
+.toc__h3 a.active { color: var(--amp-blue-dark); }
+.toc li.hidden { display: none; }
+
+/* --- Content --- */
+.amp-content {
+  padding: 32px 0 64px;
+  min-width: 0; /* allow children to shrink */
+}
+.amp-content > h1 { font-size: 30px; line-height: 1.2; margin: 0 0 16px; }
+.amp-content > h2 {
+  font-size: 24px; line-height: 1.25; margin: 48px 0 12px;
+  padding-bottom: 8px; border-bottom: 2px solid var(--amp-blue);
+}
+.amp-content > h3 {
+  font-size: 18px; line-height: 1.3; margin: 32px 0 10px;
+  color: var(--amp-blue-dark);
+}
+.amp-content h2:first-child, .amp-content h1 + h2 { margin-top: 0; }
+.amp-content p, .amp-content ul, .amp-content ol { margin: 0 0 16px; max-width: 80ch; }
+.amp-content ul, .amp-content ol { padding-left: 24px; }
+.amp-content li { margin-bottom: 6px; }
+.amp-content code {
+  background: var(--amp-light); padding: 1px 6px; border-radius: 3px;
+  font-family: ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace; font-size: 14px;
+}
+.amp-content pre {
+  background: #0b0c0c; color: #f3f2f1; padding: 16px; overflow-x: auto;
+  font-family: ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace; font-size: 13px; line-height: 1.5;
+  border-left: 4px solid var(--amp-blue);
+}
+.amp-content pre code { background: transparent; padding: 0; color: inherit; border-radius: 0; }
+.amp-content blockquote {
+  margin: 16px 0; padding: 12px 20px; border-left: 5px solid var(--amp-blue);
+  background: var(--amp-light); color: var(--amp-fg);
+  max-width: 80ch;
+}
+.amp-content blockquote p:last-child { margin-bottom: 0; }
+.amp-content hr { border: none; border-top: 1px solid var(--amp-border); margin: 32px 0; }
+
+/* Anchor links on headings — visible on hover */
+.amp-content h2 .anchor, .amp-content h3 .anchor {
+  text-decoration: none; color: var(--amp-blue); opacity: 0;
+  padding-right: 6px; font-weight: 400;
+  transition: opacity 0.1s;
+}
+.amp-content h2:hover .anchor, .amp-content h3:hover .anchor { opacity: 1; }
+
+/* Cross-references like §4.6 */
+.xref {
+  color: var(--amp-blue); text-decoration: none;
+  border-bottom: 1px dotted var(--amp-blue);
+}
+.xref:hover { background: var(--amp-blue); color: #fff; border-bottom-color: var(--amp-blue); }
+
+/* --- Tables --- */
+.amp-table-wrap {
+  margin: 16px 0; overflow-x: auto; border: 1px solid var(--amp-border);
+  max-width: 100%;
+}
+.amp-table {
+  border-collapse: collapse; width: 100%; font-size: 14px; line-height: 1.4;
+  min-width: 600px;
+}
+.amp-table--wide .amp-table { min-width: 1100px; }
+.amp-table th, .amp-table td {
+  text-align: left; padding: 10px 12px; vertical-align: top;
+  border-bottom: 1px solid var(--amp-light);
+}
+.amp-table th {
+  background: var(--amp-light); font-weight: 700;
+  position: sticky; top: 0; z-index: 1;
+  border-bottom: 2px solid var(--amp-border);
+}
+.amp-table td:first-child { font-weight: 600; }
+.amp-table tr:hover td { background: #fafafa; }
+
+/* Two-col GOV.UK we-do/we-don't style — match the intro frame visually */
+.amp-content blockquote h3 { margin-top: 0; }
+
+/* --- Mobile --- */
+.amp-toc-toggle { display: none; }
+@media (max-width: 980px) {
+  .amp-layout { grid-template-columns: 1fr; }
+  .amp-sidebar {
+    position: fixed; left: 0; top: 0; bottom: 0; width: 320px; max-width: 88vw;
+    background: #fff; z-index: 100; transform: translateX(-100%);
+    transition: transform 0.2s ease-out; border-right: 1px solid var(--amp-border);
+    padding-left: 16px; padding-right: 16px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.15);
+  }
+  .amp-sidebar.amp-sidebar--open { transform: translateX(0); }
+  .amp-toc-toggle {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--amp-blue); color: #fff; border: none;
+    padding: 8px 14px; font: inherit; cursor: pointer;
+    font-size: 14px; font-weight: 700;
+  }
+  .amp-toc-toggle:focus { outline: 3px solid var(--amp-yellow); }
+  .amp-content { padding-top: 16px; }
+}
+
+/* --- Print --- */
+@media print {
+  .amp-sidebar, .amp-phase, .amp-toc-toggle, #backToTop { display: none !important; }
+  .amp-layout { display: block; max-width: none; padding: 0; }
+  .amp-content { padding: 0; }
+  .amp-content h2 { page-break-before: always; }
+  .amp-content h2:first-of-type { page-break-before: avoid; }
+  .amp-content pre, .amp-content blockquote, .amp-table-wrap { page-break-inside: avoid; }
+  a { color: inherit; text-decoration: underline; }
+  .anchor { display: none; }
+  body { font-size: 11pt; }
+}
+
+/* --- Back-to-top --- */
+#backToTop {
+  position: fixed; right: 24px; bottom: 24px;
+  background: var(--amp-blue); color: #fff;
+  border: none; padding: 10px 14px;
+  font: inherit; font-size: 14px; font-weight: 700;
+  cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  opacity: 0; pointer-events: none; transition: opacity 0.15s;
+  z-index: 50;
+}
+#backToTop:focus { outline: 3px solid var(--amp-yellow); outline-offset: 0; }
+#backToTop.visible { opacity: 1; pointer-events: auto; }
+</style>
+</head>
+<body>
+
+<header class="amp-header" role="banner">
+  <div class="amp-header__inner">
+    <div class="amp-header__title">
+      HMCTS API Marketplace
+      <small>Discovery report &middot; 2026-05-21 &middot; pre-design, pre-implementation</small>
+    </div>
+    <div class="amp-header__meta">
+      <span>Author: Duncan Crawford</span>
+      <span>Status: Discovery</span>
+    </div>
+  </div>
+</header>
+
+<div class="amp-phase" role="region" aria-label="Document phase">
+  <div class="amp-phase__inner">
+    <strong class="amp-phase__tag">Discovery</strong>
+    <span>Living document. 19 open questions in §11 — feedback welcome. <button class="amp-toc-toggle" id="tocToggle" aria-expanded="false" aria-controls="sidebar">☰ Contents</button></span>
+  </div>
+</div>
+
+<div class="amp-layout">
+
+  <aside class="amp-sidebar" id="sidebar" aria-label="Table of contents">
+    <div class="amp-sidebar__search">
+      <label for="tocSearch" class="govuk-visually-hidden">Filter sections</label>
+      <input id="tocSearch" type="search" placeholder="Filter sections…" autocomplete="off">
+    </div>
+    <nav aria-label="Document sections">
+      <ul class="toc" id="toc">
+<li class="toc__h2"><a href="#1-executive-summary" data-target="1-executive-summary">1. Executive summary</a></li>
+<li class="toc__h3"><a href="#whats-locked-in" data-target="whats-locked-in">What's locked in</a></li>
+<li class="toc__h3"><a href="#whats-still-tbd" data-target="whats-still-tbd">What's still TBD</a></li>
+<li class="toc__h3"><a href="#what-this-document-is-not" data-target="what-this-document-is-not">What this document is not</a></li>
+<li class="toc__h2"><a href="#2-positioning" data-target="2-positioning">2. Positioning</a></li>
+<li class="toc__h3"><a href="#we-dont-build-apis-we-connect-you-to-them" data-target="we-dont-build-apis-we-connect-you-to-them">We don't build APIs — we connect you to them.</a></li>
+<li class="toc__h3"><a href="#what-it-is" data-target="what-it-is">What it is</a></li>
+<li class="toc__h3"><a href="#what-we-do-and-dont" data-target="what-we-do-and-dont">What we do, and don't</a></li>
+<li class="toc__h3"><a href="#who-its-for" data-target="who-its-for">Who it's for</a></li>
+<li class="toc__h3"><a href="#how-it-works-4-steps" data-target="how-it-works-4-steps">How it works (4 steps)</a></li>
+<li class="toc__h3"><a href="#key-benefits" data-target="key-benefits">Key benefits</a></li>
+<li class="toc__h3"><a href="#common-misconceptions-preserve-in-product-copy" data-target="common-misconceptions-preserve-in-product-copy">Common misconceptions (preserve in product copy)</a></li>
+<li class="toc__h2"><a href="#3-personas-roles-and-entity-model" data-target="3-personas-roles-and-entity-model">3. Personas, roles, and entity model</a></li>
+<li class="toc__h3"><a href="#31-personas-roles" data-target="31-personas-roles">3.1 Personas / roles</a></li>
+<li class="toc__h3"><a href="#32-candidate-first-class-entities" data-target="32-candidate-first-class-entities">3.2 Candidate first-class entities</a></li>
+<li class="toc__h2"><a href="#4-the-marketplace-journeys" data-target="4-the-marketplace-journeys">4. The marketplace journeys</a></li>
+<li class="toc__h3"><a href="#41-consumer-wants-existing-data-the-happy-path" data-target="41-consumer-wants-existing-data-the-happy-path">4.1 Consumer — wants existing data ("the happy path")</a></li>
+<li class="toc__h3"><a href="#42-consumer-wants-data-that-doesnt-exist-new-api-request-demand-signalling" data-target="42-consumer-wants-data-that-doesnt-exist-new-api-request-demand-signalling">4.2 Consumer — wants data that doesn't exist (New API Request — demand signalling)</a></li>
+<li class="toc__h3"><a href="#43-api-access-request-the-consumer-side-approval-lifecycle" data-target="43-api-access-request-the-consumer-side-approval-lifecycle">4.3 API Access Request (the consumer-side approval lifecycle)</a></li>
+<li class="toc__h3"><a href="#44-producer-publish-a-new-api" data-target="44-producer-publish-a-new-api">4.4 Producer — publish a new API</a></li>
+<li class="toc__h3"><a href="#45-reviewer-gate-publications-into-the-catalogue" data-target="45-reviewer-gate-publications-into-the-catalogue">4.5 Reviewer — gate publications into the catalogue</a></li>
+<li class="toc__h3"><a href="#46-consumer-onboarding-derived-not-in-current-miro" data-target="46-consumer-onboarding-derived-not-in-current-miro">4.6 Consumer onboarding *(derived — not in current Miro)*</a></li>
+<li class="toc__h3"><a href="#47-producer-organisation-onboarding-derived-not-in-current-miro" data-target="47-producer-organisation-onboarding-derived-not-in-current-miro">4.7 Producer / Organisation onboarding *(derived — not in current Miro)*</a></li>
+<li class="toc__h2"><a href="#5-the-consumer-technical-integration-journey-post-grant" data-target="5-the-consumer-technical-integration-journey-post-grant">5. The consumer technical integration journey (post-grant)</a></li>
+<li class="toc__h2"><a href="#6-capabilities-catalogue-verbatim-organised" data-target="6-capabilities-catalogue-verbatim-organised">6. Capabilities catalogue (verbatim, organised)</a></li>
+<li class="toc__h3"><a href="#61-api-catalogue-discovery" data-target="61-api-catalogue-discovery">6.1 API Catalogue & Discovery</a></li>
+<li class="toc__h3"><a href="#62-api-publication-onboarding" data-target="62-api-publication-onboarding">6.2 API Publication & Onboarding</a></li>
+<li class="toc__h3"><a href="#63-user-registration-identity-management" data-target="63-user-registration-identity-management">6.3 User Registration & Identity Management</a></li>
+<li class="toc__h3"><a href="#64-api-publication-review-approval" data-target="64-api-publication-review-approval">6.4 API Publication Review & Approval</a></li>
+<li class="toc__h3"><a href="#65-access-request-management" data-target="65-access-request-management">6.5 Access Request Management</a></li>
+<li class="toc__h2"><a href="#7-reference-portal-observations" data-target="7-reference-portal-observations">7. Reference portal observations</a></li>
+<li class="toc__h3"><a href="#71-nhs-digital-digitalnhsukdeveloper" data-target="71-nhs-digital-digitalnhsukdeveloper">7.1 NHS Digital — `digital.nhs.uk/developer`</a></li>
+<li class="toc__h3"><a href="#72-hmrc-developer-hub-developerservicehmrcgovuk" data-target="72-hmrc-developer-hub-developerservicehmrcgovuk">7.2 HMRC Developer Hub — `developer.service.hmrc.gov.uk`</a></li>
+<li class="toc__h3"><a href="#73-govuk-one-login" data-target="73-govuk-one-login">7.3 GOV.UK One Login</a></li>
+<li class="toc__h3"><a href="#74-gds-tech-docs-template-the-de-facto-pattern" data-target="74-gds-tech-docs-template-the-de-facto-pattern">7.4 GDS Tech Docs Template — the de facto pattern</a></li>
+<li class="toc__h2"><a href="#8-the-architectural-fork-gateway-vs-broker" data-target="8-the-architectural-fork-gateway-vs-broker">8. The architectural fork — **Gateway** vs **Broker**</a></li>
+<li class="toc__h3"><a href="#81-the-two-options" data-target="81-the-two-options">8.1 The two options</a></li>
+<li class="toc__h3"><a href="#82-the-miro-artefacts-disagree-with-each-other" data-target="82-the-miro-artefacts-disagree-with-each-other">8.2 The Miro artefacts disagree with each other</a></li>
+<li class="toc__h3"><a href="#83-proposed-default-broker-v1-gateway-adapter-from-day-one" data-target="83-proposed-default-broker-v1-gateway-adapter-from-day-one">8.3 Proposed default: **Broker v1, gateway adapter from day one**</a></li>
+<li class="toc__h2"><a href="#9-docs-surface-decision-single-app-vs-two-app" data-target="9-docs-surface-decision-single-app-vs-two-app">9. Docs surface decision — single-app vs two-app</a></li>
+<li class="toc__h3"><a href="#option-1-single-nextjs-app-content-in-mdxmarkdown" data-target="option-1-single-nextjs-app-content-in-mdxmarkdown">Option 1 — Single Next.js app, content in MDX/Markdown</a></li>
+<li class="toc__h3"><a href="#option-2-two-app-pattern-nextjs-gds-tech-docs-template-recommended" data-target="option-2-two-app-pattern-nextjs-gds-tech-docs-template-recommended">Option 2 — Two-app pattern: Next.js + GDS tech-docs-template (**Recommended**)</a></li>
+<li class="toc__h3"><a href="#option-3-three-app-pattern-catalogue-admin-docs" data-target="option-3-three-app-pattern-catalogue-admin-docs">Option 3 — Three-app pattern: catalogue + admin + docs</a></li>
+<li class="toc__h3"><a href="#proposed-default-option-2" data-target="proposed-default-option-2">Proposed default: **Option 2**</a></li>
+<li class="toc__h2"><a href="#10-reconciliation-deltas-across-artefacts" data-target="10-reconciliation-deltas-across-artefacts">10. Reconciliation deltas across artefacts</a></li>
+<li class="toc__h2"><a href="#11-open-questions-with-proposed-defaults" data-target="11-open-questions-with-proposed-defaults">11. Open questions (with proposed defaults)</a></li>
+<li class="toc__h3"><a href="#111-producer-or-provider" data-target="111-producer-or-provider">11.1 Producer or Provider?</a></li>
+<li class="toc__h3"><a href="#112-who-is-the-reviewer" data-target="112-who-is-the-reviewer">11.2 Who is the Reviewer?</a></li>
+<li class="toc__h3"><a href="#113-gateway-or-broker" data-target="113-gateway-or-broker">11.3 Gateway or broker?</a></li>
+<li class="toc__h3"><a href="#114-how-are-access-requests-routed" data-target="114-how-are-access-requests-routed">11.4 How are access requests routed?</a></li>
+<li class="toc__h3"><a href="#115-access-policy-values" data-target="115-access-policy-values">11.5 Access policy values</a></li>
+<li class="toc__h3"><a href="#116-public-private-data-flag-what-does-anonymous-browse-reveal" data-target="116-public-private-data-flag-what-does-anonymous-browse-reveal">11.6 Public / private data flag — what does anonymous browse reveal?</a></li>
+<li class="toc__h3"><a href="#117-status-taxonomy" data-target="117-status-taxonomy">11.7 Status taxonomy</a></li>
+<li class="toc__h3"><a href="#118-publication-review-outcomes-2-3-or-4" data-target="118-publication-review-outcomes-2-3-or-4">11.8 Publication review outcomes — 2, 3, or 4?</a></li>
+<li class="toc__h3"><a href="#119-sla-targets" data-target="119-sla-targets">11.9 SLA targets</a></li>
+<li class="toc__h3"><a href="#1110-dpias-in-publication-review" data-target="1110-dpias-in-publication-review">11.10 DPIAs in publication review?</a></li>
+<li class="toc__h3"><a href="#1111-are-recommender-analytics-change-logs-mvp" data-target="1111-are-recommender-analytics-change-logs-mvp">11.11 Are recommender / analytics / change logs MVP?</a></li>
+<li class="toc__h3"><a href="#1112-what-do-the-two-stand-alone-mvp-markers-in-the-capabilities-csv-refer-to" data-target="1112-what-do-the-two-stand-alone-mvp-markers-in-the-capabilities-csv-refer-to">11.12 What do the two stand-alone "MVP" markers in the Capabilities CSV refer to?</a></li>
+<li class="toc__h3"><a href="#1113-docs-surface-architecture" data-target="1113-docs-surface-architecture">11.13 Docs surface architecture</a></li>
+<li class="toc__h3"><a href="#1114-adopt-organisation-application-subscription-as-first-class-entities" data-target="1114-adopt-organisation-application-subscription-as-first-class-entities">11.14 Adopt Organisation + Application + Subscription as first-class entities?</a></li>
+<li class="toc__h3"><a href="#1115-consumer-email-domain-validation-policy" data-target="1115-consumer-email-domain-validation-policy">11.15 Consumer email domain validation policy</a></li>
+<li class="toc__h3"><a href="#1116-mfa-policy-at-registration" data-target="1116-mfa-policy-at-registration">11.16 MFA policy at registration</a></li>
+<li class="toc__h3"><a href="#1117-first-time-consumer-ux-after-signup" data-target="1117-first-time-consumer-ux-after-signup">11.17 First-time consumer UX after signup</a></li>
+<li class="toc__h3"><a href="#1118-producer-onboarding-initiation-and-ownership-transfer" data-target="1118-producer-onboarding-initiation-and-ownership-transfer">11.18 Producer onboarding initiation and ownership transfer</a></li>
+<li class="toc__h3"><a href="#1119-per-api-ownership-within-an-organisation" data-target="1119-per-api-ownership-within-an-organisation">11.19 Per-API ownership within an Organisation</a></li>
+<li class="toc__h2"><a href="#12-non-goals-for-this-document" data-target="12-non-goals-for-this-document">12. Non-goals for this document</a></li>
+<li class="toc__h2"><a href="#appendix-a-artefact-inventory" data-target="appendix-a-artefact-inventory">Appendix A — Artefact inventory</a></li>
+<li class="toc__h2"><a href="#appendix-b-glossary" data-target="appendix-b-glossary">Appendix B — Glossary</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="amp-content" id="content">
+<h1 id="hmcts-api-marketplace-discovery-report"><a class="anchor" href="#hmcts-api-marketplace-discovery-report" aria-label="Link to HMCTS API Marketplace — Discovery Report">#</a>HMCTS API Marketplace — Discovery Report</h1>
+<div class="amp-table-wrap"><table class="amp-table"><thead><tr><th></th><th></th></tr></thead><tbody><tr><td><strong>Status</strong></td><td>Discovery — pre-design, pre-implementation</td></tr><tr><td><strong>Date</strong></td><td>2026-05-20 (last updated 2026-05-21)</td></tr><tr><td><strong>Owner</strong></td><td>Duncan Crawford (acting)</td></tr><tr><td><strong>Audience</strong></td><td>AMp product, design, engineering, governance</td></tr><tr><td><strong>Location</strong></td><td><code>api-amp/api-marketplace-product/product/discovery/</code> — co-located with the product corpus</td></tr><tr><td><strong>Supersedes</strong></td><td>Sibling drafts in this repo (<code>product/vision.md</code>, <code>product/principles.md</code>, <code>playbook/</code>, etc.) where they disagree with the Miro canonical artefacts. Those earlier drafts remain useful for tone/wording but are no longer the authoritative source.</td></tr><tr><td><strong>Source of truth for content corpus</strong></td><td>Miro board <code>uXjVJW-oswM=</code></td></tr><tr><td><strong>Next phase</strong></td><td>Resolve open questions (<a class="xref" href="#11-open-questions-with-proposed-defaults">§11</a>), then move to design</td></tr></tbody></table></div>
+<hr>
+<h2 id="1-executive-summary"><a class="anchor" href="#1-executive-summary" aria-label="Link to 1. Executive summary">#</a>1. Executive summary</h2>
+<p>The HMCTS API Marketplace (&quot;AMp&quot;) is a curated catalogue and access layer for HMCTS APIs — a single place where Consumers discover APIs, request access through a governed process, and integrate with confidence; and where Providers list their APIs, manage access decisions, and stay accountable for support, versioning, and deprecation.</p>
+<p>This document is the <strong>discovery output</strong> for the marketplace&#39;s customer-facing product (the &quot;amp-site&quot;). It synthesises:</p>
+<ul>
+<li>The Miro board (Introduction, the full swimlane journey, five detailed flows, a capability catalogue) — treated as the <strong>canonical product thinking</strong>.</li>
+<li>A pre-existing HTML prototype and the <code>api-marketplace-product</code> docs repo — treated as <strong>earlier thinking, not authoritative</strong>.</li>
+<li>Three independent UK-government developer portals — <strong>NHS Digital</strong>, <strong>HMRC Developer Hub</strong>, <strong>GOV.UK One Login</strong> — analysed front-end and (for NHS) back-end.</li>
+<li>The <strong>GDS Tech Docs Template</strong> ecosystem.</li>
+</ul>
+<h3 id="whats-locked-in"><a class="anchor" href="#whats-locked-in" aria-label="Link to What's locked in">#</a>What's locked in</h3>
+<ul>
+<li><strong>Positioning</strong>: a <em>catalogue and access layer</em>, not an API builder or operator.</li>
+<li><strong>Seven user journeys</strong> (<a class="xref" href="#4-the-marketplace-journeys">§4</a>): two onboarding journeys (Consumer onboarding <a class="xref" href="#46-consumer-onboarding-derived-not-in-current-miro">§4.6</a>, Producer/Organisation onboarding <a class="xref" href="#47-producer-organisation-onboarding-derived-not-in-current-miro">§4.7</a> — both <em>derived</em>, not in current Miro) + five canonical Miro journeys (two consumer, two producer, one reviewer).</li>
+<li><strong>Four roles</strong>: Consumer, Producer (a.k.a. Provider — naming TBD <a class="xref" href="#111-producer-or-provider">§11.1</a>), Reviewer, Admin.</li>
+<li><strong>GOV.UK Design System</strong> as the visual baseline.</li>
+<li><strong>Anonymous browse of the catalogue</strong> is in scope; sign-in only at access-request time.</li>
+<li><strong>Producer owns the API end-to-end</strong> — the marketplace never builds, hosts, or operates listed APIs.</li>
+<li><strong>Two distinct approval gates</strong>: (a) publication review (Reviewer gates the catalogue) and (b) access approval (Producer gates per-API access).</li>
+<li><strong>Audit trail required</strong> for all decisions.</li>
+</ul>
+<h3 id="whats-still-tbd"><a class="anchor" href="#whats-still-tbd" aria-label="Link to What's still TBD">#</a>What's still TBD</h3>
+<p>Twelve open questions are surfaced in <a class="xref" href="#11-open-questions-with-proposed-defaults">§11</a>. The biggest is the <strong>architectural fork</strong> (<a class="xref" href="#8-the-architectural-fork-gateway-vs-broker">§8</a>): is AMp a <em>gateway</em> (proxies API traffic, enforces rate limits centrally, issues credentials) or a <em>broker</em> (catalogue + request paperwork only, producers run their own gateways)?</p>
+<h3 id="what-this-document-is-not"><a class="anchor" href="#what-this-document-is-not" aria-label="Link to What this document is not">#</a>What this document is not</h3>
+<ul>
+<li><strong>Not a design.</strong> No IA proposal for amp-site, no page-level mockups, no schema, no API surface.</li>
+<li><strong>Not a build plan.</strong> No tech stack lock-in beyond GOV.UK Design System; no sequencing.</li>
+<li><strong>Not an MVP scope.</strong> Capabilities are catalogued and MVP markers preserved where the source artefacts marked them; final MVP scope is a design-phase output.</li>
+</ul>
+<hr>
+<h2 id="2-positioning"><a class="anchor" href="#2-positioning" aria-label="Link to 2. Positioning">#</a>2. Positioning</h2>
+<p>The Miro Introduction frame is the <strong>canonical positioning artefact</strong>. Reproduced verbatim:</p>
+<blockquote>
+<h3 id="we-dont-build-apis-we-connect-you-to-them"><a class="anchor" href="#we-dont-build-apis-we-connect-you-to-them" aria-label="Link to We don't build APIs — we connect you to them.">#</a>We don't build APIs — we connect you to them.</h3>
+<p><em>&quot;Like a library — we don&#39;t write the books, we organise them so you can find and borrow what you need.&quot;</em></p>
+</blockquote>
+<h3 id="what-it-is"><a class="anchor" href="#what-it-is" aria-label="Link to What it is">#</a>What it is</h3>
+<blockquote>
+<p>A single place to discover, access and use APIs.</p>
+<p>An API Marketplace is a curated catalogue of APIs from across the organisation and beyond. Think of it as an App Store for APIs — one centralised hub where teams can browse what&#39;s available, understand what each API does, and request access to use it. The marketplace doesn&#39;t create the APIs; it makes them discoverable, documented, and accessible.</p>
+</blockquote>
+<h3 id="what-we-do-and-dont"><a class="anchor" href="#what-we-do-and-dont" aria-label="Link to What we do, and don't">#</a>What we do, and don't</h3>
+<div class="amp-table-wrap"><table class="amp-table"><thead><tr><th>✓ We do</th><th>✗ We don&#39;t</th></tr></thead><tbody><tr><td>Curate and catalogue available APIs</td><td>Build or develop the APIs</td></tr><tr><td>Provide documentation and usage guides</td><td>Own or maintain the underlying services</td></tr><tr><td>Manage access requests and onboarding</td><td>Host your data or run your systems</td></tr><tr><td>Enforce API standards and governance</td><td>Fix bugs in the APIs themselves</td></tr><tr><td>Act as the single source of truth for APIs</td><td>Replace your development team</td></tr></tbody></table></div>
+<h3 id="who-its-for"><a class="anchor" href="#who-its-for" aria-label="Link to Who it's for">#</a>Who it's for</h3>
+<div class="amp-table-wrap"><table class="amp-table"><thead><tr><th>Audience</th><th>Description</th></tr></thead><tbody><tr><td><strong>API Consumers</strong></td><td>Developers, product teams and analysts looking for APIs to integrate into their work — without reinventing the wheel.</td></tr><tr><td><strong>API Providers</strong></td><td>Teams who have built an API and want it discovered, used, and governed consistently across the organisation.</td></tr></tbody></table></div>
+<h3 id="how-it-works-4-steps"><a class="anchor" href="#how-it-works-4-steps" aria-label="Link to How it works (4 steps)">#</a>How it works (4 steps)</h3>
+<ol>
+<li><strong>Browse</strong> — Explore the catalogue of available APIs</li>
+<li><strong>Discover</strong> — Read docs, understand capabilities and owners</li>
+<li><strong>Request</strong> — Apply for access through a governed process</li>
+<li><strong>Use</strong> — Integrate and build with confidence</li>
+</ol>
+<h3 id="key-benefits"><a class="anchor" href="#key-benefits" aria-label="Link to Key benefits">#</a>Key benefits</h3>
+<ul>
+<li><strong>Reduce duplication</strong> — Stop teams building the same APIs twice; find what already exists.</li>
+<li><strong>Faster integration</strong> — Documentation and access in one place speeds up delivery.</li>
+<li><strong>Governance &amp; standards</strong> — APIs are vetted, versioned, and consistent before they&#39;re listed.</li>
+<li><strong>Single source of truth</strong> — One place to see every API available; no more hunting around.</li>
+</ul>
+<h3 id="common-misconceptions-preserve-in-product-copy"><a class="anchor" href="#common-misconceptions-preserve-in-product-copy" aria-label="Link to Common misconceptions (preserve in product copy)">#</a>Common misconceptions (preserve in product copy)</h3>
+<ul>
+<li><em>&quot;The marketplace team will build the API we need.&quot;</em> → <strong>We list and govern APIs; the building stays with your development team. We can help you get it marketplace-ready.</strong></li>
+<li><em>&quot;It&#39;s only useful for developers.&quot;</em> → <strong>Product owners, architects, and analysts all benefit from knowing what capabilities already exist in the organisation.</strong></li>
+<li><em>&quot;If my API is in the catalogue, the marketplace team supports it.&quot;</em> → <strong>The API owner remains responsible for support and maintenance. We manage the listing, access, and documentation standards.</strong></li>
+</ul>
+<hr>
+<h2 id="3-personas-roles-and-entity-model"><a class="anchor" href="#3-personas-roles-and-entity-model" aria-label="Link to 3. Personas, roles, and entity model">#</a>3. Personas, roles, and entity model</h2>
+<h3 id="31-personas-roles"><a class="anchor" href="#31-personas-roles" aria-label="Link to 3.1 Personas / roles">#</a>3.1 Personas / roles</h3>
+<p>Five roles emerge consistently across the Miro artefacts and the Capabilities CSV.</p>
+<div class="amp-table-wrap"><table class="amp-table"><thead><tr><th>Role</th><th>Description</th><th>Lives where in journeys</th></tr></thead><tbody><tr><td><strong>Anonymous visitor</strong></td><td>Anyone who lands on the public catalogue. Browses without auth.</td><td>DISCOVERY stage only</td></tr><tr><td><strong>Consumer</strong></td><td>Developer / product team / analyst integrating with existing APIs. Has an account; submits access requests.</td><td>All consumer journeys</td></tr><tr><td><strong>Producer</strong> <em>(a.k.a. Provider — naming TBD <a class="xref" href="#111-producer-or-provider">§11.1</a>)</em></td><td>Team that owns and publishes an API. Has an account tied to an Organisation. Reviews access requests for their APIs.</td><td>All producer journeys</td></tr><tr><td><strong>Reviewer</strong></td><td>Marketplace governance role. Gates publications into the catalogue. <strong>Who owns this role is TBD <a class="xref" href="#112-who-is-the-reviewer">§11.2</a>.</strong></td><td>Publication Review, Access Compliance (per Miro full swimlane)</td></tr><tr><td><strong>Admin</strong></td><td>Marketplace operations. Handles escalations (e.g. SLA breaches on access requests).</td><td>Access Request (escalation path)</td></tr></tbody></table></div>
+<h3 id="32-candidate-first-class-entities"><a class="anchor" href="#32-candidate-first-class-entities" aria-label="Link to 3.2 Candidate first-class entities">#</a>3.2 Candidate first-class entities</h3>
+<p>Three entities are <em>implied</em> but not currently modelled in the Miro artefacts. Both HMRC and GOV.UK One Login treat these as first-class. Adopting them is a major design decision; see <a class="xref" href="#11-open-questions-with-proposed-defaults">§11</a>.</p>
+<div class="amp-table-wrap"><table class="amp-table"><thead><tr><th>Entity</th><th>What it is</th><th>Why it matters</th><th>Adopt?</th></tr></thead><tbody><tr><td><strong>Organisation</strong></td><td>A team, department, or supplier organisation. A User belongs to one or more Organisations. Producers register an Organisation (not just themselves).</td><td>Solves credential ownership when individuals leave. Solves &quot;who&#39;s authorised to publish on behalf of X&quot;. The Capabilities CSV explicitly mentions &quot;organisation onboarding&quot;.</td><td><strong>Proposed default: yes</strong></td></tr><tr><td><strong>Application / Client</strong></td><td>A registered piece of consumer software that consumes APIs. Holds the credentials, redirect URIs, environment binding. Owned by an Organisation.</td><td>Without it, &quot;credentials&quot; and &quot;rate limits&quot; have no clean home. HMRC and One Login both model this.</td><td><strong>Proposed default: yes</strong></td></tr><tr><td><strong>Subscription</strong></td><td>A binding of an Application to a specific API at a specific version.</td><td>Solves multi-version cleanly: a v1-subscribed app keeps working when v2 ships; producer can deprecate v1 without breaking v2 consumers.</td><td><strong>Proposed default: yes</strong></td></tr></tbody></table></div>
+<p><strong>Reference model from HMRC</strong> (battle-tested over ~10 years, MIT-licensed domain models in <a href="https://github.com/hmrc/api-platform-application-domain"><code>hmrc/api-platform-application-domain</code></a>):</p>
+<pre><code>User ──belongs to──&gt; Organisation ──owns──&gt; Application ──subscribes to──&gt; API @ Version
+</code></pre>
+<p>GOV.UK One Login&#39;s Service entity is the same shape, called something different. Both <strong>separate user identity from software identity</strong> — adopting that separation is the single biggest lever for credential management hygiene.</p>
+<hr>
+<h2 id="4-the-marketplace-journeys"><a class="anchor" href="#4-the-marketplace-journeys" aria-label="Link to 4. The marketplace journeys">#</a>4. The marketplace journeys</h2>
+<p>Seven journeys in total. The <strong>five canonical journeys (§<a class="xref" href="#41-consumer-wants-existing-data-the-happy-path">§4.1</a>–4.5)</strong> are taken verbatim from the Miro board. The <strong>two onboarding journeys (§<a class="xref" href="#46-consumer-onboarding-derived-not-in-current-miro">§4.6</a>, 4.7)</strong> are <em>derived</em> — they are not in the current Miro board, but they are implied by registration steps in <a class="xref" href="#41-consumer-wants-existing-data-the-happy-path">§4.1</a> and <a class="xref" href="#44-producer-publish-a-new-api">§4.4</a> and explicitly required by the Capabilities CSV (&quot;Self-service consumer registration&quot;, &quot;Producer registration and organisation onboarding&quot;). Drafted from convergence across NHS, HMRC, and GOV.UK One Login.</p>
+<p>Each journey has the same structure: trigger, happy path, alternate paths, decisions, statuses, SLAs, notifications, audit events, and a comparison row showing what NHS / HMRC / One Login do at the equivalent stage.</p>
+<h3 id="41-consumer-wants-existing-data-the-happy-path"><a class="anchor" href="#41-consumer-wants-existing-data-the-happy-path" aria-label="Link to 4.1 Consumer — wants existing data ("the happy path")">#</a>4.1 Consumer — wants existing data ("the happy path")</h3>
+<p><strong>Trigger</strong>: Consumer has a business or technical need for data that is, or might be, available via an HMCTS API.</p>
+<p><strong>Happy path</strong>:</p>
+<ol>
+<li>Consumer wants data — has a business or technical need</li>
+<li><em>(Decision)</em> Already registered? → if <strong>no</strong>, <em>Register for marketplace</em> (create account and profile); if <strong>yes</strong>, continue</li>
+<li><em>Log into marketplace</em> — authenticate securely</li>
+<li><em>Search for data</em> — by keyword, domain, or category</li>
+<li><em>(Decision)</em> API found? → if <strong>yes</strong>, continue; if <strong>no</strong>, branch to <strong><a class="xref" href="#42-consumer-wants-data-that-doesnt-exist-new-api-request-demand-signalling">§4.2</a> New API Request</strong></li>
+<li><em>API details displayed</em> — name, owner, docs, status</li>
+<li><em>Request API access</em> — submit use case and details (enters <strong><a class="xref" href="#43-api-access-request-the-consumer-side-approval-lifecycle">§4.3</a> Access Request flow</strong>)</li>
+<li><em>Sent to approval flow</em></li>
+<li><em>Consumer notified</em> — approved or rejected</li>
+<li><strong>Journey complete</strong></li>
+</ol>
+<p><strong>Open in this flow</strong> (yellow stickies preserved):</p>
+<ul>
+<li><em>&quot;Search public data without logging&quot;</em> — confirms anonymous browse is by design</li>
+<li><em>&quot;Public and private data?&quot;</em> / <em>&quot;API which retrieves combination of public and private data?&quot;</em> / <em>&quot;Do we have a flag for public and private data?&quot;</em> — <strong>see <a class="xref" href="#116-public-private-data-flag-what-does-anonymous-browse-reveal">§11.6</a></strong></li>
+<li><em>&quot;Request form&quot;</em> — exact field set is design-phase work</li>
+</ul>
+<p><strong>Reference comparison</strong>:</p>
+<div class="amp-table-wrap"><table class="amp-table"><thead><tr><th>Stage</th><th>NHS Digital</th><th>HMRC</th><th>One Login</th></tr></thead><tbody><tr><td>Discover</td><td><code>/developer/api-catalogue</code> — 186 APIs, 5 facet groups</td><td><code>/api-documentation</code> — 120 APIs, by tax category</td><td>n/a (One Login is itself a single product)</td></tr><tr><td>Register</td><td>Keycloak (<code>identity.prod.api.platform.nhs.uk</code>)</td><td>Gov Gateway / Developer Hub IdP</td><td>Gov email + mobile 2FA, ~5 minutes, no approval</td></tr><tr><td>Request access</td><td>10-step assurance + per-API config</td><td>Subscribe Application to API → request prod credentials</td><td>Self-serve via admin tool</td></tr></tbody></table></div>
+<h3 id="42-consumer-wants-data-that-doesnt-exist-new-api-request-demand-signalling"><a class="anchor" href="#42-consumer-wants-data-that-doesnt-exist-new-api-request-demand-signalling" aria-label="Link to 4.2 Consumer — wants data that doesn't exist (New API Request — demand signalling)">#</a>4.2 Consumer — wants data that doesn't exist (New API Request — demand signalling)</h3>
+<p><strong>Trigger</strong>: Consumer search returns nothing.</p>
+<p><strong>Happy path</strong>:</p>
+<ol>
+<li><em>No matching API found</em></li>
+<li><em>Submit new API request</em> — data need, use case, urgency</li>
+<li><em>Automated acknowledgement</em> — <strong>reference number issued</strong></li>
+<li><em>Logged in request backlog</em> — Reviewer notified <em>(reviewer ownership TBD <a class="xref" href="#112-who-is-the-reviewer">§11.2</a>)</em></li>
+<li><em>Reviewer assesses request</em> — feasibility, value, complexity</li>
+<li><em>(Decision)</em> Similar API already exists? → if <strong>yes</strong>, <em>Redirect to existing API</em> (consumer notified with link), journey complete</li>
+<li><em>(Decision)</em> Feasible and valuable? → if <strong>no</strong>, <em>Request declined</em> (reason and alternatives), journey complete</li>
+<li><em>Prioritised in roadmap</em> — scored by value and urgency</li>
+<li><em>Consumer notified</em> — accepted with expected timeline</li>
+<li><em>API designed and built</em> — producer team develops (this kicks off <strong><a class="xref" href="#44-producer-publish-a-new-api">§4.4</a> Publish flow</strong> when ready)</li>
+<li><em>Published to marketplace</em></li>
+<li><em>Consumer notified</em> — API is live; prompted to request access (kicks off <strong><a class="xref" href="#41-consumer-wants-existing-data-the-happy-path">§4.1</a></strong>)</li>
+<li><strong>Journey complete</strong></li>
+</ol>
+<p><strong>This is a major journey not present anywhere except Miro.</strong> The marketplace doubles as a <strong>demand-signalling and roadmap-input system</strong> — consumers can request APIs that don&#39;t exist, those get triaged, prioritised, fed into producer roadmaps, and looped back when delivered. No reference portal (NHS, HMRC, One Login) has this; it is an HMCTS-specific innovation.</p>
+<p><strong>Key implication</strong>: AMp is not just a <em>catalogue product</em>. It is also a <em>demand register</em> for new APIs across HMCTS. The team running it needs a triage capability.</p>
+<h3 id="43-api-access-request-the-consumer-side-approval-lifecycle"><a class="anchor" href="#43-api-access-request-the-consumer-side-approval-lifecycle" aria-label="Link to 4.3 API Access Request (the consumer-side approval lifecycle)">#</a>4.3 API Access Request (the consumer-side approval lifecycle)</h3>
+<p><strong>Trigger</strong>: Consumer submits an access request from an API detail page (<a class="xref" href="#41-consumer-wants-existing-data-the-happy-path">§4.1</a> step 7).</p>
+<p><strong>Happy path</strong>:</p>
+<ol>
+<li><em>Access request received</em> — submitted by consumer</li>
+<li><em>Automated pre-screening</em> — fields complete, account valid, API status live<ul>
+<li><strong>Fail</strong> → <em>Returned to consumer</em> with clear reason</li>
+<li><strong>Pass</strong> → continue</li>
+</ul>
+</li>
+<li><em>API owner notified</em> — full request details sent (channel: email + in-app alert)</li>
+<li><em>Owner reviews request</em> — checks criteria and compliance</li>
+<li><em>Initial decision</em> — three branches:<ul>
+<li><strong>Approve</strong> → straight to credential issuance (step 9)</li>
+<li><strong>Reject</strong> → <em>Rejection sent</em> (reason + next steps)</li>
+<li><strong>More info</strong> → step 6</li>
+</ul>
+</li>
+<li><em>Request more info</em> — <strong>consumer given 5 business days to respond</strong></li>
+<li><em>(Decision)</em> Consumer responds?<ul>
+<li><strong>No (and 3 days inactive)</strong> → <em>SLA breached</em> → <em>Escalate to admin</em>; if still no response, <em>Request closed</em></li>
+<li><strong>Yes</strong> → re-review → step 8</li>
+</ul>
+</li>
+<li><em>Approve or reject?</em> — final decision made<ul>
+<li><strong>Reject</strong> → <em>Rejection sent</em></li>
+<li><strong>Approve</strong> → continue</li>
+</ul>
+</li>
+<li><em>Credentials issued</em> — secure delivery to consumer ← <strong>mechanism TBD <a class="xref" href="#117-status-taxonomy">§11.7</a>; recommendation: JWKS-first model adopted from One Login</strong></li>
+<li><em>Approval notification sent</em> — credentials + docs + rate limits</li>
+<li><em>Decision logged and audited</em></li>
+</ol>
+<p><strong>Concrete SLAs (from Miro flow)</strong>:</p>
+<ul>
+<li>Consumer &quot;more info&quot; response window: <strong>5 business days</strong></li>
+<li>Inactivity escalation: <strong>3 days</strong> of silence within the window</li>
+<li>Producer review of access request: <strong>TBD</strong> (proposed default: 5 business days, see <a class="xref" href="#119-sla-targets">§11.9</a>)</li>
+</ul>
+<p><strong>Open in this flow</strong>:</p>
+<ul>
+<li><em>&quot;Requests to owner?&quot;</em> — implies some access requests may not route to the producer directly. Possible scenarios: highly-sensitive APIs that route to AMp Admin first; cross-cutting requests touching multiple APIs. <strong>See <a class="xref" href="#114-how-are-access-requests-routed">§11.4</a></strong>.</li>
+</ul>
+<p><strong>Reference comparison</strong>:</p>
+<div class="amp-table-wrap"><table class="amp-table"><thead><tr><th>Aspect</th><th>NHS</th><th>HMRC</th><th>One Login</th></tr></thead><tbody><tr><td>Access gating</td><td>Per-API, 10-step assurance</td><td>Production application review, <strong>≤10 working days</strong></td><td>Self-serve registration; no approval at registration; production-gating handled separately</td></tr><tr><td>Credential delivery</td><td>Per-API; CIS2/JWKS hybrid</td><td>OAuth 2.0 client credentials issued via admin tool</td><td>JWKS-first; service team publishes public key, platform never issues secrets</td></tr><tr><td>SLAs</td><td>None published</td><td>10 working days</td><td>Not stated; immediate self-serve for non-prod</td></tr><tr><td>Audit</td><td>Required</td><td>Yes (events platform)</td><td>Yes</td></tr></tbody></table></div>
+<h3 id="44-producer-publish-a-new-api"><a class="anchor" href="#44-producer-publish-a-new-api" aria-label="Link to 4.4 Producer — publish a new API">#</a>4.4 Producer — publish a new API</h3>
+<p><strong>Trigger</strong>: Producer has an API ready to list.</p>
+<p><strong>Happy path</strong>:</p>
+<ol>
+<li>Producer wants to publish — has an API ready to list</li>
+<li><em>(Decision)</em> Already registered? → if <strong>no</strong>, <em>Register as producer</em> (organisation and team details) ← <em>Organisation onboarding</em> (capabilities CSV)</li>
+<li><em>Log into marketplace</em> — authenticate securely</li>
+<li><em>Create API listing</em> — name, description, docs, version</li>
+<li><em>Set access policy</em> — <strong>Open / Request-based / Restricted</strong> ← <em>note: Capabilities CSV uses Open / Restricted / Partner-only — <a class="xref" href="#115-access-policy-values">§11.5</a> deltas</em></li>
+<li><em>Submit for approval</em> — sent to marketplace reviewer; enters <strong><a class="xref" href="#45-reviewer-gate-publications-into-the-catalogue">§4.5</a> Publication Review</strong></li>
+<li><em>Under review</em> — Reviewer assesses</li>
+<li><em>(Decision)</em> Approved? → see <a class="xref" href="#45-reviewer-gate-publications-into-the-catalogue">§4.5</a> for the three outcomes</li>
+<li><em>Producer notified</em> — approval confirmation sent</li>
+<li><em>API published and live</em> — visible and discoverable</li>
+<li><strong>Journey complete</strong></li>
+</ol>
+<p><strong>Plus the ONGOING band (Miro full swimlane)</strong>:</p>
+<blockquote>
+<p>Producer maintains the API · Updates documentation · Manages versions · Monitors usage · Handles deprecations · Manages consumer access.</p>
+<p>Producer is accountable for keeping the API live, current and fit for purpose across all consumers.</p>
+</blockquote>
+<p>This is a <em>standing responsibility</em>, not a journey end-state. The marketplace surfaces this responsibility but does not take it on.</p>
+<p><strong>Plus the API Transfer auxiliary flow</strong> (referenced in the swimlane via the sticky &quot;Existing API transfer?&quot;): a parallel route for migrating a pre-existing HMCTS API into the marketplace. Vertical sequence (from Miro PDF): Producer identifies existing API → compiles transfer brief → submits transfer request → automated validation → reviewer assesses → approve/reject → transfer agreement → API listed → producer manages → journey complete. <strong>The detail of this flow is thinner than the build-new flow and warrants a dedicated working session.</strong></p>
+<h3 id="45-reviewer-gate-publications-into-the-catalogue"><a class="anchor" href="#45-reviewer-gate-publications-into-the-catalogue" aria-label="Link to 4.5 Reviewer — gate publications into the catalogue">#</a>4.5 Reviewer — gate publications into the catalogue</h3>
+<p><strong>Trigger</strong>: Producer submits a listing for approval (<a class="xref" href="#44-producer-publish-a-new-api">§4.4</a> step 6).</p>
+<p><strong>Happy path</strong>:</p>
+<ol>
+<li><em>Create API listing</em> — name, docs, version, policy <em>(producer)</em></li>
+<li><em>Submit for review</em> — status: <strong>pending</strong></li>
+<li><em>Validate submission</em> — system: check required fields</li>
+<li><em>(Decision)</em> Validation passed?<ul>
+<li><strong>Fail</strong> — errors returned to producer</li>
+<li><strong>Pass</strong> → step 5</li>
+</ul>
+</li>
+<li><em>Assign reviewer</em> — route to approver queue</li>
+<li><em>Reviewer notified</em> — email and in-app alert</li>
+<li><em>Review listing</em> — docs, policy, compliance</li>
+<li><em>Make decision</em> — <strong>three outcomes</strong> (Capabilities CSV adds a possible fourth, &quot;conditionally approve&quot; — <a class="xref" href="#118-publication-review-outcomes-2-3-or-4">§11.8</a>):<ul>
+<li><strong>Approve</strong> → status: <strong>live</strong> → API published to catalogue → approval notification → API live and visible</li>
+<li><strong>Query</strong> → request more info → status: <strong>queried</strong> → producer notified → producer responds → loops back to reviewer</li>
+<li><strong>Reject</strong> → mandatory rejection reason → status: <strong>rejected</strong> → producer notified with reason and guidance → <em>Rework listing</em> → resubmit → new review cycle</li>
+</ul>
+</li>
+</ol>
+<p><strong>Listing statuses (canonical from this flow)</strong>:</p>
+<ul>
+<li><code>pending</code> — submitted, awaiting reviewer</li>
+<li><code>queried</code> — reviewer requested clarification</li>
+<li><code>rejected</code> — reviewer rejected with reason</li>
+<li><code>live</code> — approved and published</li>
+</ul>
+<p><strong>Plus (Miro full swimlane) a parallel reviewer gate at access stage</strong>: <em>&quot;Checks Compliance — GDPR, data policy and security&quot;</em> and <em>&quot;Flags to Owner — passes with notes or escalates&quot;</em>. This implies the Reviewer role doesn&#39;t only gate publication; they also have a compliance check role during access approval for sensitive cases. <strong><a class="xref" href="#114-how-are-access-requests-routed">§11.4</a> covers the routing question.</strong></p>
+<p><strong>Reviewer criteria (from HTML prototype, treated as reasonable starter set)</strong>:</p>
+<ul>
+<li>SwaggerHub spec exists and has at least one endpoint</li>
+<li>Plain-English description is clear and accurate</li>
+<li>Data classification is correctly applied</li>
+<li>API name follows naming conventions</li>
+<li>Owning team is contactable</li>
+</ul>
+<p><strong>Open questions</strong>:</p>
+<ul>
+<li><strong>Who owns the Reviewer role?</strong> <a class="xref" href="#112-who-is-the-reviewer">§11.2</a></li>
+<li><strong>DPIAs in publication review?</strong> <a class="xref" href="#1110-dpias-in-publication-review">§11.10</a></li>
+</ul>
+<h3 id="46-consumer-onboarding-derived-not-in-current-miro"><a class="anchor" href="#46-consumer-onboarding-derived-not-in-current-miro" aria-label="Link to 4.6 Consumer onboarding *(derived — not in current Miro)*">#</a>4.6 Consumer onboarding *(derived — not in current Miro)*</h3>
+<p><strong>This journey is not in the Miro board.</strong> It is implied by the &quot;Register for marketplace&quot; step in <a class="xref" href="#41-consumer-wants-existing-data-the-happy-path">§4.1</a> and required by the Capabilities CSV items &quot;Self-service consumer registration&quot;, &quot;Email verification and account activation&quot;, and &quot;Account recovery and password reset&quot;. Drafted here from convergence across One Login (5-minute self-serve), HMRC (account + email activation), and the HTML prototype&#39;s auth overlay.</p>
+<p><strong>Trigger</strong>: An anonymous visitor wants to become a registered Consumer. Two entry points:</p>
+<ul>
+<li>Click <em>Register</em> / <em>Create account</em> from the catalogue or any signed-out page.</li>
+<li>Hit <em>Request access</em> on an API detail page while signed out → auth prompt → register option.</li>
+</ul>
+<p><strong>Happy path</strong> (proposed, conformant with One Login&#39;s 5-minute pattern and the Capabilities CSV requirements):</p>
+<ol>
+<li><em>Start registration</em> — anonymous visitor clicks Register</li>
+<li><em>Enter email address</em> — domain validation runs (<a class="xref" href="#1115-consumer-email-domain-validation-policy">§11.15</a>): if domain is on the approved-partner list, continue to step 3; if not, branch to the <em>Partner Organisation route</em> below</li>
+<li><em>Email verification</em> — security code sent; user enters code; code expires after 24h</li>
+<li><em>Set password</em> — minimum 8 characters; GDS passphrase guidance recommended</li>
+<li><em>Set up MFA</em> — TOTP authenticator app or mobile-SMS (<a class="xref" href="#1116-mfa-policy-at-registration">§11.16</a>). Backup codes generated and shown once</li>
+<li><em>Profile details</em> — first name, last name, organisation (pick from existing OR request to add new), job role</li>
+<li><em>Role declaration</em> — &quot;I am registering as…&quot; → <strong>Consumer</strong> (default), Producer, or Reviewer. <em>Note: producer + reviewer self-registration UX is in the HTML prototype but warrants review against <a class="xref" href="#112-who-is-the-reviewer">§11.2</a> (Reviewer ownership).</em></li>
+<li><em>Communications preferences (optional)</em> — opt in: API update notifications, new API announcements, AMp newsletter</li>
+<li><em>Accept terms of use</em> — once-only, version-tracked</li>
+<li><em>Account active</em> — welcome screen + first-time guidance</li>
+<li><em>(Optional)</em> First-time welcome flow — guided tour of the catalogue, &quot;browse 3 APIs to learn the system&quot; nudge, link to docs (<a class="xref" href="#1117-first-time-consumer-ux-after-signup">§11.17</a>)</li>
+<li><strong>Journey complete</strong> — Consumer is ready to use <a class="xref" href="#41-consumer-wants-existing-data-the-happy-path">§4.1</a> (wants data) and <a class="xref" href="#42-consumer-wants-data-that-doesnt-exist-new-api-request-demand-signalling">§4.2</a> (wants new API)</li>
+</ol>
+<p><strong>Organisation handling at signup</strong>:</p>
+<ul>
+<li>If the email domain matches an existing Organisation (e.g. <code>*@hmcts.gov.uk</code> → &quot;HMCTS&quot;), the user is added to that Organisation as a Consumer member by default.</li>
+<li>If no Organisation matches, user is prompted: (a) join an existing Organisation by requesting access from its Org Admin, or (b) submit a request to register a new Organisation (kicks off <strong><a class="xref" href="#47-producer-organisation-onboarding-derived-not-in-current-miro">§4.7</a></strong>).</li>
+</ul>
+<p><strong>Alternate path — Partner Organisation route</strong> (external partners not yet known to AMp):</p>
+<ol>
+<li>Email domain not on the approved-partner list at step 2</li>
+<li>User shown a Partner Organisation application form: organisation legal name, contact details, intended use case, sponsoring HMCTS contact (if any)</li>
+<li>Submitted to AMp Admin for review (SLA: 10 working days — <a class="xref" href="#119-sla-targets">§11.9</a>)</li>
+<li>On approval: user receives invite link to complete registration; user becomes Org Admin for the new Organisation</li>
+<li>On rejection: user notified with reason; reapply allowed after 30 days</li>
+</ol>
+<p><strong>SLAs</strong>:</p>
+<ul>
+<li>Email verification code expiry: <strong>24 hours</strong></li>
+<li>Partner Organisation approval: <strong>10 working days</strong> (<a class="xref" href="#119-sla-targets">§11.9</a>)</li>
+<li>Account lockout: <strong>5 failed login attempts</strong> → forced password reset</li>
+</ul>
+<p><strong>Notifications</strong>:</p>
+<ul>
+<li>Email: registration started, verification code, MFA backup codes, terms accepted, partner approval decision</li>
+<li>In-app: welcome banner persists 7 days</li>
+</ul>
+<p><strong>Audit events</strong>: <code>account.created</code> · <code>email.verified</code> · <code>mfa.enrolled</code> · <code>organisation.joined</code> <em>or</em> <code>organisation.requested</code> · <code>terms.accepted</code> · <code>consumer.role.declared</code></p>
+<p><strong>Reference comparison</strong>:</p>
+<div class="amp-table-wrap"><table class="amp-table"><thead><tr><th>Aspect</th><th>NHS Digital</th><th>HMRC</th><th>One Login</th></tr></thead><tbody><tr><td>Registration time</td><td>Multi-step (Keycloak)</td><td>&quot;Register, activate by email, sign in&quot;</td><td><strong>~5 minutes</strong> (email + email code + mobile + SMS)</td></tr><tr><td>Approval at registration</td><td>None</td><td>None</td><td>None</td></tr><tr><td>Verification</td><td>Email + smartcard for CIS2 routes</td><td>Email</td><td>Email + mobile</td></tr><tr><td>MFA</td><td>Varies by route</td><td>Yes</td><td>Mandatory</td></tr><tr><td>Organisation handling</td><td>Implicit (ODS codes)</td><td>Single Application per Organisation</td><td>One service per Organisation</td></tr></tbody></table></div>
+<p><strong>In-flow open questions</strong> <em>(load-bearing ones promoted to <a class="xref" href="#11-open-questions-with-proposed-defaults">§11</a>)</em>:</p>
+<ul>
+<li>Email domain validation policy — <a class="xref" href="#1115-consumer-email-domain-validation-policy">§11.15</a></li>
+<li>MFA — mobile-required vs TOTP-optional — <a class="xref" href="#1116-mfa-policy-at-registration">§11.16</a></li>
+<li>First-time UX after signup — guided tour vs straight to catalogue — <a class="xref" href="#1117-first-time-consumer-ux-after-signup">§11.17</a></li>
+</ul>
+<h3 id="47-producer-organisation-onboarding-derived-not-in-current-miro"><a class="anchor" href="#47-producer-organisation-onboarding-derived-not-in-current-miro" aria-label="Link to 4.7 Producer / Organisation onboarding *(derived — not in current Miro)*">#</a>4.7 Producer / Organisation onboarding *(derived — not in current Miro)*</h3>
+<p><strong>This journey is not in the Miro board.</strong> It is implied by the &quot;Register as producer — organisation and team details&quot; step in <a class="xref" href="#44-producer-publish-a-new-api">§4.4</a>, by the Capabilities CSV item &quot;Producer registration and organisation onboarding&quot;, and by the Organisation choice during Consumer signup (<a class="xref" href="#46-consumer-onboarding-derived-not-in-current-miro">§4.6</a> step 6). Drafted here.</p>
+<p>This journey establishes an <strong>Organisation</strong> as a first-class entity in AMp and grants it Producer status — the precondition for <a class="xref" href="#44-producer-publish-a-new-api">§4.4</a> (publishing APIs) and <a class="xref" href="#44-producer-publish-a-new-api">§4.4</a> onwards (reviewing access requests).</p>
+<p><strong>Trigger</strong>: A team needs to publish or transfer one or more APIs into AMp. Two entry points:</p>
+<ul>
+<li>A user (already a registered Consumer) requests to upgrade their Organisation to Producer status.</li>
+<li>A new organisation lands on the marketplace and clicks <em>Become a Producer</em> (kicks off Consumer onboarding <a class="xref" href="#46-consumer-onboarding-derived-not-in-current-miro">§4.6</a> first, then re-enters here).</li>
+</ul>
+<p><strong>Happy path</strong>:</p>
+<ol>
+<li><em>Initiator registers</em> — if not already registered, completes <a class="xref" href="#46-consumer-onboarding-derived-not-in-current-miro">§4.6</a> first</li>
+<li><em>Request Producer status for the Organisation</em> — initiator (Org Admin) submits the producer-readiness form:<ul>
+<li>Organisation legal name + display name</li>
+<li><strong>Sector identifier</strong> (immutable once set — One Login pattern, used for cross-Organisation correlation)</li>
+<li>ODS code if applicable</li>
+<li>Primary contact (name, email, role)</li>
+<li><strong>Operational contact for incident response</strong> (24/7 availability if applicable)</li>
+<li>Initial list of APIs the Organisation intends to publish (optional)</li>
+<li>Confirmation of accountability (&quot;we are responsible for support, versioning, deprecation, and incident response for all APIs we publish&quot;)</li>
+</ul>
+</li>
+<li><em>Automated pre-screening</em> — system checks email domain matches, no duplicate Organisation, all required fields complete<ul>
+<li><strong>Fail</strong> → returned with clear reasons</li>
+<li><strong>Pass</strong> → continue</li>
+</ul>
+</li>
+<li><em>Reviewer assesses</em> — AMp Reviewer (<a class="xref" href="#112-who-is-the-reviewer">§11.2</a>) validates Organisation legitimacy: producer team confirmed, sponsoring HMCTS contact verified if external, governance contacts in place, incident response model appropriate to intended data classification</li>
+<li><em>Initial decision</em> — same four-outcome pattern as publication review (<a class="xref" href="#118-publication-review-outcomes-2-3-or-4">§11.8</a>):<ul>
+<li><strong>Approve</strong> → step 6</li>
+<li><strong>Conditionally approve</strong> → step 6 with stipulations (e.g. <em>&quot;DPIA framework must be in place before first Restricted-class listing&quot;</em>)</li>
+<li><strong>Query</strong> → request more info → Org Admin responds → re-review</li>
+<li><strong>Reject</strong> → reason given; reapply allowed after 30 days</li>
+</ul>
+</li>
+<li><em>Organisation upgraded to Producer status</em> — internal flag flipped; the Organisation can now both consume AND publish</li>
+<li><em>Welcome pack delivered</em> (email + in-app):<ul>
+<li>Link to the producer guide (in amp-site-docs — <a class="xref" href="#9-docs-surface-decision-single-app-vs-two-app">§9</a>)</li>
+<li>Link to the API publish wizard (kicks off <a class="xref" href="#44-producer-publish-a-new-api">§4.4</a>)</li>
+<li>Producer onboarding checklist (API design standards, classification mapping, DPIA expectations, etc.)</li>
+<li>AMp contact for producer support</li>
+</ul>
+</li>
+<li><em>Add team members</em> — Org Admin invites colleagues:<ul>
+<li>Email invitation with join link (30-day expiry)</li>
+<li>Per-invite role assignment: <strong>Org Admin</strong> · <strong>Producer</strong> (can publish + review access requests) · <strong>Producer-Reviewer</strong> (can only review access requests, not publish) · <strong>Read-only</strong></li>
+<li>Recipient registers via <a class="xref" href="#46-consumer-onboarding-derived-not-in-current-miro">§4.6</a> (Consumer onboarding) but joins this Organisation directly, skipping the org-selection step</li>
+</ul>
+</li>
+<li><em>(Optional) First API listing</em> — Org Admin or any Producer can now begin <a class="xref" href="#44-producer-publish-a-new-api">§4.4</a> (publish flow)</li>
+<li><strong>Journey complete</strong> — Organisation operates as a Producer</li>
+</ol>
+<p><strong>SLAs</strong>:</p>
+<ul>
+<li>Producer status approval (Reviewer review): <strong>10 working days</strong> (HMRC pattern — <a class="xref" href="#119-sla-targets">§11.9</a>)</li>
+<li>Team member invitation: <strong>30 days</strong> before expiry</li>
+<li>Removed team member&#39;s permissions: <strong>revoked immediately</strong>, including in-flight access requests</li>
+</ul>
+<p><strong>Ownership transfer</strong> (One Login self-stated gap — <a class="xref" href="#73-govuk-one-login">§7.3</a>):</p>
+<ul>
+<li>Org Admin can nominate another active team member as new Org Admin</li>
+<li>Original Org Admin retains read-only access until transfer is confirmed via email link</li>
+<li>AMp Admin can force-transfer ownership on request, with audit, when the original Admin has left and not nominated a successor — <strong><a class="xref" href="#1118-producer-onboarding-initiation-and-ownership-transfer">§11.18</a></strong></li>
+</ul>
+<p><strong>Notifications</strong>:</p>
+<ul>
+<li>Email: submission acknowledged, decision (approve/conditional/query/reject), team invitation sent + accepted + expired, ownership-transfer initiated + completed</li>
+<li>In-app: dashboard welcome pack, pending team-invite reminders, ownership-transfer prompts</li>
+</ul>
+<p><strong>Audit events</strong>: <code>organisation.created</code> · <code>organisation.producer-status.requested</code> · <code>organisation.producer-status.{approved|conditionally-approved|queried|rejected}</code> · <code>organisation.member.{invited|joined|removed|role-changed}</code> · <code>organisation.ownership.transferred</code> · <code>organisation.api.first-published</code></p>
+<p><strong>Reference comparison</strong>:</p>
+<div class="amp-table-wrap"><table class="amp-table"><thead><tr><th>Aspect</th><th>NHS Digital</th><th>HMRC</th><th>One Login</th></tr></thead><tbody><tr><td>Organisation as first-class entity</td><td>Implicit (ODS codes)</td><td><strong>Explicit</strong> (<a href="https://github.com/hmrc/api-platform-organisation-domain"><code>api-platform-organisation-domain</code></a>)</td><td>Implicit (one Service per Organisation)</td></tr><tr><td>Producer / supplier approval</td><td>10-step assurance</td><td>Implicit; producer registers Application</td><td>Self-serve service registration</td></tr><tr><td>Team management</td><td>Not publicly surfaced</td><td>Multi-user per Application</td><td>Yes, via admin tool</td></tr><tr><td>Ownership transfer</td><td>Not stated</td><td>Yes (Org-level admin)</td><td><strong>Self-stated gap</strong> — not possible</td></tr></tbody></table></div>
+<p><strong>In-flow open questions</strong> <em>(load-bearing ones promoted to <a class="xref" href="#11-open-questions-with-proposed-defaults">§11</a>)</em>:</p>
+<ul>
+<li>Who can initiate Producer onboarding — anyone, or only nominated HMCTS contacts? — <a class="xref" href="#1118-producer-onboarding-initiation-and-ownership-transfer">§11.18</a></li>
+<li>Ownership-transfer mechanism — <a class="xref" href="#1118-producer-onboarding-initiation-and-ownership-transfer">§11.18</a></li>
+<li>Per-API ownership within an Organisation — is an API tied to the Organisation or to a sub-team? — <a class="xref" href="#1119-per-api-ownership-within-an-organisation">§11.19</a></li>
+</ul>
+<hr>
+<h2 id="5-the-consumer-technical-integration-journey-post-grant"><a class="anchor" href="#5-the-consumer-technical-integration-journey-post-grant" aria-label="Link to 5. The consumer technical integration journey (post-grant)">#</a>5. The consumer technical integration journey (post-grant)</h2>
+<p>The five Miro journeys cover the <strong>marketplace transactional lifecycle</strong> (find → request → approve → granted). They stop short of <em>&quot;now what does the consumer technically do?&quot;</em>.</p>
+<p>All three reference portals — NHS Digital, HMRC, GOV.UK One Login — independently converge on the same <strong>6-stage technical integration lifecycle</strong>. AMp should adopt it; it&#39;s a known-good pattern that gives consumers a clear ramp.</p>
+<div class="amp-table-wrap"><table class="amp-table"><thead><tr><th>Stage</th><th>NHS Digital</th><th>HMRC</th><th>GOV.UK One Login</th><th><strong>Proposed for AMp</strong></th></tr></thead><tbody><tr><td><strong>1. Understand</strong></td><td>&quot;Understand the NHS landscape&quot;</td><td>&quot;Before you start&quot;</td><td>&quot;How GOV.UK One Login Works&quot;</td><td>&quot;What the API does, in plain English&quot;</td></tr><tr><td><strong>2. Quick start</strong></td><td>(implicit — try sandbox)</td><td>(implicit — register + sandbox)</td><td>&quot;Quick Start (Docker)&quot;</td><td>&quot;Try the mock server — no credentials required&quot; <em>(prototype already supports this via SwaggerHub virtserver)</em></td></tr><tr><td><strong>3. Before you integrate</strong></td><td>&quot;Prepare your integration&quot;</td><td>&quot;Apply for a developer account&quot;</td><td>&quot;Before You Integrate&quot; (auth method, keys, scopes)</td><td>Auth method · environments · data classification implications · rate limits · data-sharing obligations</td></tr><tr><td><strong>4. Integrate (sandbox)</strong></td><td>&quot;Build your API integration&quot;</td><td>&quot;Subscribe Application in sandbox&quot;</td><td>&quot;Integration Environment&quot;</td><td>Sandbox / staging access request → integrate against producer&#39;s test endpoint</td></tr><tr><td><strong>5. Test</strong></td><td>&quot;Test your integration&quot;</td><td>&quot;Test in sandbox&quot;</td><td>&quot;Test your integration (simulator + e2e)&quot;</td><td>Producer-defined test cases + load/perf expectations</td></tr><tr><td><strong>6. Go live</strong></td><td>&quot;Go live with your integration&quot;</td><td>&quot;Apply for production credentials&quot; (≤10 working days)</td><td>&quot;Configure for Production&quot;</td><td>Production access request → producer approves → credentials issued → audit logged</td></tr></tbody></table></div>
+<p><strong>Important consequence</strong>: AMp&#39;s docs surface needs to be <strong>6-stage structured by default</strong>, not random pages. The information architecture of the docs follows the customer&#39;s mental model of where they are in their integration.</p>
+<p>This is also where <strong><a class="xref" href="#9-docs-surface-decision-single-app-vs-two-app">§9</a> docs surface decision</strong> matters: a 6-stage tech doc structure is exactly what the GDS <code>tech-docs-template</code> is built for.</p>
+<hr>
+<h2 id="6-capabilities-catalogue-verbatim-organised"><a class="anchor" href="#6-capabilities-catalogue-verbatim-organised" aria-label="Link to 6. Capabilities catalogue (verbatim, organised)">#</a>6. Capabilities catalogue (verbatim, organised)</h2>
+<p>Source: Miro &quot;Capabilities&quot; sticky board (CSV export, WIP). Stickies preserved verbatim. Two stand-alone &quot;MVP&quot; markers in the CSV are unattached — likely intended as MVP for &quot;Browse APIs by domain, category and keyword&quot; and &quot;View API listings with plain language descriptions&quot; but <strong><a class="xref" href="#1112-what-do-the-two-stand-alone-mvp-markers-in-the-capabilities-csv-refer-to">§11.12</a></strong> flags this as ambiguous.</p>
+<h3 id="61-api-catalogue-discovery"><a class="anchor" href="#61-api-catalogue-discovery" aria-label="Link to 6.1 API Catalogue & Discovery">#</a>6.1 API Catalogue & Discovery</h3>
+<ul>
+<li>Browse APIs by domain, category and keyword <em>(MVP candidate)</em></li>
+<li>View API listings with plain language descriptions <em>(MVP candidate)</em></li>
+<li>Filter APIs by access type, status, classification and domain</li>
+<li>Display data classification labels e.g. public / private? <em>(open question — <a class="xref" href="#116-public-private-data-flag-what-does-anonymous-browse-reveal">§11.6</a>)</em></li>
+<li>Show API ownership, version and lifecycle status</li>
+<li>Surface related APIs and suggested alternatives <em>(recommender feature)</em></li>
+<li>Support unauthenticated browsing for open/public APIs</li>
+<li>Support <strong>semantic / tag-based search</strong> (business terms, not only API names — e.g. <em>Warrants</em>, <em>PrisonRegister</em>, <em>HearingResults</em>)</li>
+</ul>
+<h3 id="62-api-publication-onboarding"><a class="anchor" href="#62-api-publication-onboarding" aria-label="Link to 6.2 API Publication & Onboarding">#</a>6.2 API Publication & Onboarding</h3>
+<ul>
+<li>Create and submit API listings with documentation</li>
+<li>Define API metadata (name, description, version, domain, classification)</li>
+<li>Set access policy <em>(Open / Restricted / Partner-only)</em> <em>— values differ from journey flow&#39;s Open / Request-based / Restricted — <a class="xref" href="#115-access-policy-values">§11.5</a></em></li>
+<li>Upload or link to technical documentation and data dictionaries</li>
+<li><strong>Define rate limits, SLAs and usage policies</strong> <em>(at publication time — implies producer sets defaults that may be overridden at access-grant time)</em></li>
+<li><strong>Manage multiple API versions simultaneously</strong></li>
+<li>Submit APIs for review and approval before publication</li>
+<li>Show maturity levels <em>(Beta / Stable / Deprecated)</em> <em>— differs from prototype&#39;s longer taxonomy — <a class="xref" href="#117-status-taxonomy">§11.7</a></em></li>
+<li>Display onboarding complexity and estimated approval time</li>
+<li>Recommend related APIs based on use case</li>
+<li>Track most popular / most used APIs</li>
+<li>Surface change logs and release notes</li>
+<li><em>Meta (out of scope for the site, in scope for the product):</em> capture operating model — Platform Admin, Governance/Security ownership, Support/Ops responsibilities (incident, SLA monitoring, compliance)</li>
+</ul>
+<h3 id="63-user-registration-identity-management"><a class="anchor" href="#63-user-registration-identity-management" aria-label="Link to 6.3 User Registration & Identity Management">#</a>6.3 User Registration & Identity Management</h3>
+<ul>
+<li>Producer registration and <strong>organisation onboarding</strong> <em>(supports Organisation as a first-class entity — <a class="xref" href="#32-candidate-first-class-entities">§3.2</a>)</em></li>
+<li>Role-based access control: <strong>Consumer / Producer / Reviewer / Admin</strong></li>
+<li>SSO integration with existing identity providers</li>
+<li>Email verification and account activation</li>
+<li>Profile management and preference settings</li>
+<li>Self-service consumer registration</li>
+<li>Account recovery and password reset</li>
+</ul>
+<h3 id="64-api-publication-review-approval"><a class="anchor" href="#64-api-publication-review-approval" aria-label="Link to 6.4 API Publication Review & Approval">#</a>6.4 API Publication Review & Approval</h3>
+<ul>
+<li>Notify producers of review decisions</li>
+<li><strong>Audit trail of all review decisions</strong></li>
+<li>Automated validation of required submission fields</li>
+<li>Assignment of submissions to a review queue</li>
+<li>Ability to request further information from the producer <em>(= &quot;Query&quot; in <a class="xref" href="#45-reviewer-gate-publications-into-the-catalogue">§4.5</a>)</em></li>
+<li><strong>Approve, conditionally approve, or reject submissions with reasons</strong> <em>(adds &quot;conditionally approve&quot; as a fourth outcome — <a class="xref" href="#118-publication-review-outcomes-2-3-or-4">§11.8</a>)</em></li>
+<li>Manual review of documentation, standards and policy compliance</li>
+<li><strong>Support for sandbox / staging environment access requests</strong> <em>(non-prod environments managed through the same workflow)</em></li>
+</ul>
+<h3 id="65-access-request-management"><a class="anchor" href="#65-access-request-management" aria-label="Link to 6.5 Access Request Management">#</a>6.5 Access Request Management</h3>
+<ul>
+<li>View history of all past access requests</li>
+<li>Submit structured access requests with business justification</li>
+<li><strong>Capture legal basis for data processing (where applicable)</strong> <em>(GDPR-aligned field)</em></li>
+<li><strong>Capture compliance and governance confirmations</strong> <em>(declarations / checkboxes)</em></li>
+<li>Resubmit requests following rejection with updated information</li>
+<li>Track request status in real time through the portal</li>
+</ul>
+<hr>
+<h2 id="7-reference-portal-observations"><a class="anchor" href="#7-reference-portal-observations" aria-label="Link to 7. Reference portal observations">#</a>7. Reference portal observations</h2>
+<p>We treat NHS Digital, HMRC, and GOV.UK One Login as <strong>the three most relevant reference points</strong> for AMp. All three are operational UK-gov developer portals at scale; their convergences are where AMp should default; their divergences are where AMp gets to choose deliberately.</p>
+<h3 id="71-nhs-digital-digitalnhsukdeveloper"><a class="anchor" href="#71-nhs-digital-digitalnhsukdeveloper" aria-label="Link to 7.1 NHS Digital — `digital.nhs.uk/developer`">#</a>7.1 NHS Digital — `digital.nhs.uk/developer`</h3>
+<p><strong>Front-end IA</strong> — 7 top-level sections on <code>/developer</code>:</p>
+<ol>
+<li>Getting started with our APIs (<code>/developer/getting-started</code>)</li>
+<li>API and integration catalogue (<code>/developer/api-catalogue</code>) — <strong>186 APIs</strong></li>
+<li>Documentation, guides and tutorials (<code>/developer/guides-and-documentation</code>)</li>
+<li>Developer community (<code>developer.community.nhs.uk</code> — separate Discourse subdomain)</li>
+<li>Help and support (<code>/developer/help-and-support</code>)</li>
+<li>Our architecture (<code>/developer/architecture</code>)</li>
+<li>Onboarding to APIs and services — the <strong>10-step Assurance process</strong> (<code>/developer/assurance/process-for-apis-and-services</code>)</li>
+</ol>
+<p><strong>Catalogue facets</strong>: Business function (17) · Care setting (17) · Integration type (7) · Technology (16) · Status APIs (7) · Status standards (4) · Owner. Plus A–Z alphabetical jump.</p>
+<p>Each listing carries <strong>multiple status badges</strong> (e.g. <em>&quot;In production&quot; + &quot;Under review for deprecation&quot;</em> concurrently). Listings show: name, description, status badges, care-setting tags, business function, technology tags.</p>
+<p><strong>Identity model</strong>: Keycloak (<code>identity.prod.api.platform.nhs.uk/realms/developer-identity/...</code>); separate <strong>Digital Onboarding Service</strong> app at <code>onboarding.prod.api.platform.nhs.uk</code>. Two-app split between docs and onboarding.</p>
+<p><strong>Architecture layers</strong> (from the layered diagram supplied by the team):</p>
+<pre><code>Infrastructure:  Google Apigee Edge (GCP)  +  AWS ECS (custom)  +  Azure Pipelines (CI/CD)
+API platform:    API proxy (OAS/FHIR, Proxygen-deployed)
+                 Rate limiting (SpikeArrest policy, Retry-After headers)
+                 Audit &amp; logging (central auth events, monitoring)
+                 GitHub (open-source proxy code)
+Auth services:   NHS CIS2 (workforce, smartcard/OIDC)
+                 NHS login (public, OAuth 2.0)
+                 App-restricted (system-to-system, signed JWTs)
+Catalogue:       REST · FHIR R4 · UK Core · MESH messaging · HL7 V3 (legacy)
+                 Key APIs: PDS · NRL · GP Connect · MESH · ODS · +50 others
+Environments:    Sandbox → Integration → UAT/DEP → Production  (SIT / pen test required)
+Onboarding:      Dev account → Sandbox dev → INT testing → Single assessment → Go live
+</code></pre>
+<p><strong>Key NHS lessons for AMp</strong>:</p>
+<ul>
+<li><strong>&quot;Single assessment&quot;</strong> for production access — once a supplier passes assurance, they&#39;re approved across multiple APIs, not per-API.</li>
+<li><strong>Multi-cloud is acceptable</strong> in UK gov (GCP + AWS + Azure). HMCTS-standard Azure is still the right default for AMp, but mixing is not heretical.</li>
+<li><strong>Producer tooling matters</strong>: NHS&#39;s <code>Proxygen</code> automates &quot;OAS spec → deployed proxy&quot;. If AMp goes gateway-mode (<a class="xref" href="#8-the-architectural-fork-gateway-vs-broker">§8</a>), we need a producer experience like this.</li>
+<li><strong>Multiple status badges per listing</strong> is more honest than a single-value status field.</li>
+<li><strong>A separate Discourse forum</strong> (<code>developer.community.nhs.uk</code>) for community support. Worth considering for AMp&#39;s support model.</li>
+</ul>
+<h3 id="72-hmrc-developer-hub-developerservicehmrcgovuk"><a class="anchor" href="#72-hmrc-developer-hub-developerservicehmrcgovuk" aria-label="Link to 7.2 HMRC Developer Hub — `developer.service.hmrc.gov.uk`">#</a>7.2 HMRC Developer Hub — `developer.service.hmrc.gov.uk`</h3>
+<p><strong>Five-entity domain model</strong> (HMRC&#39;s most important contribution):</p>
+<pre><code>User ──belongs to──&gt; Organisation ──owns──&gt; Application ──subscribes to──&gt; API @ Version
+</code></pre>
+<p>This separation is the cleanest answer to AMp&#39;s open questions about credential ownership, multi-version subscriptions, and per-grant rate limits.</p>
+<p><strong>Two-environment model</strong>: Sandbox (free, no approval) → Production (Application review, <strong>≤10 working days</strong>). Same API code, different base URLs.</p>
+<p><strong>Three auth tiers</strong>:</p>
+<ul>
+<li><strong>Open access</strong> — no token required</li>
+<li><strong>Application-restricted</strong> — OAuth 2.0 client credentials grant</li>
+<li><strong>User-restricted</strong> — OAuth 2.0 authorisation code grant</li>
+</ul>
+<p><strong>Catalogue organised by user-language tax domain</strong> — Self Assessment, VAT, PAYE, Corporation Tax, Customs, Charities, Trusts, Pensions, Construction Industry Scheme, Lifetime ISA, Making Tax Digital, etc. — <em>not by HMRC&#39;s internal team structure</em>.</p>
+<p><strong>API detail page tabs</strong>: Overview / Errors / Testing / Fraud Prevention / Versioning / Endpoints. Right-rail metadata: API Type, Latest Version, Last Updated, Sandbox Base URL, Production Base URL, Fraud Prevention Headers.</p>
+<p><strong>Development practices</strong>:</p>
+<ul>
+<li><strong>6 months breaking-change notice</strong> required</li>
+<li>&quot;Single application per organisation&quot; recommended</li>
+<li>No CORS — server-to-server only</li>
+<li>Sandbox-first development → automated weekly tests recommended</li>
+<li>&quot;Gov-Test-Scenario&quot; header lets sandbox simulate error states</li>
+</ul>
+<p><strong>Open source</strong> — <a href="https://github.com/hmrc"><code>hmrc/</code></a> has 24+ active <code>api-platform-*</code> repos in Scala. Most relevant for our <strong>domain modelling</strong>:</p>
+<div class="amp-table-wrap"><table class="amp-table"><thead><tr><th>Repo</th><th>What it models</th></tr></thead><tbody><tr><td><code>api-platform-application-domain</code></td><td>Application entity</td></tr><tr><td><code>api-platform-organisation-domain</code></td><td>Organisation entity</td></tr><tr><td><code>api-platform-api-domain</code></td><td>API entity</td></tr><tr><td><code>api-platform-events</code> + <code>api-platform-application-events</code></td><td>Event-sourced state model</td></tr><tr><td><code>api-platform-api-catalogue-publish</code></td><td>Publishing pipeline</td></tr><tr><td><code>api-platform-deskpro</code></td><td>Support integration (DeskPro ticketing)</td></tr><tr><td><code>api-platform-organisation-frontend</code></td><td>Manage Applications UI</td></tr></tbody></table></div>
+<p><strong>We won&#39;t fork</strong> (Scala vs. our likely Next.js; opinionated micro-service stack). But the <strong>MIT-licensed domain models are worth reading</strong> when we design our schema.</p>
+<p><strong>Key HMRC lessons for AMp</strong>:</p>
+<ul>
+<li><strong>Adopt the User → Organisation → Application → Subscription → API model</strong> (<a class="xref" href="#32-candidate-first-class-entities">§3.2</a>).</li>
+<li><strong>Sandbox-first onboarding</strong> — anyone with an account can integrate against sandbox immediately; production gating is the <em>only</em> approval gate.</li>
+<li><strong>Catalogue should be organised by the user&#39;s mental model</strong>, not the org chart.</li>
+<li><strong>6-month breaking-change notice</strong> is a sensible default for AMp&#39;s deprecation policy.</li>
+</ul>
+<h3 id="73-govuk-one-login"><a class="anchor" href="#73-govuk-one-login" aria-label="Link to 7.3 GOV.UK One Login">#</a>7.3 GOV.UK One Login</h3>
+<p><strong>3-app architecture</strong>:</p>
+<div class="amp-table-wrap"><table class="amp-table"><thead><tr><th>App</th><th>Domain</th><th>Purpose</th></tr></thead><tbody><tr><td>Main service</td><td><code>www.sign-in.service.gov.uk</code></td><td>End-user sign-in (anonymous consumers of the service)</td></tr><tr><td>Admin tool</td><td><code>admin.sign-in.service.gov.uk</code></td><td>Service-team self-serve (separate app, separate auth)</td></tr><tr><td>Tech docs</td><td><code>docs.sign-in.service.gov.uk</code></td><td>Developer technical documentation (separate static site, built on GDS tech-docs-template)</td></tr></tbody></table></div>
+<p><strong>Self-serve registration in 5 minutes</strong> with no approval gate at registration. Gov email + mobile 2FA → fill client config form → Client ID issued immediately. Same model HMRC uses. The approval gate sits at the <em>integration → production</em> boundary, not at <em>signup</em>.</p>
+<p><strong>The Service entity</strong> (One Login&#39;s equivalent of HMRC&#39;s Application) carries:</p>
+<ul>
+<li>Client ID (system-assigned, unique, immutable)</li>
+<li>Client Name (shown to end users)</li>
+<li>Contacts (email addresses for ops)</li>
+<li>Redirect URLs (multiple)</li>
+<li>Post-logout URLs (multiple)</li>
+<li>Back channel logout URI</li>
+<li><strong>Sector identifier (immutable once set)</strong></li>
+<li>Scopes (<code>openid</code> mandatory; <code>email</code>, <code>phone</code> optional)</li>
+<li>Claims (identity attributes: coreIdentityJWT, returnCode, passport, drivingPermit, address)</li>
+<li>Token auth method (<code>private_key_jwt</code> recommended, <code>client_secret_post</code> fallback)</li>
+<li>Public key (JWKS endpoint URL <strong>or</strong> static PEM)</li>
+<li>ID token signing algorithm (RS256 or ES256)</li>
+</ul>
+<p><strong>Per-environment Client IDs</strong>: &quot;If you have staging, user acceptance testing, integration and production you should configure 4 client IDs&quot;. A different choice from HMRC (one Application, multiple environments) — both work.</p>
+<p><strong>JWKS-first key model</strong>: the platform <strong>doesn&#39;t issue secrets</strong>. Service team generates RSA 2048 keypair locally (<code>openssl genpkey</code>), exposes the public key via JWKS endpoint, the platform caches up to 24 hours. Rotation = &quot;publish new <code>kid</code> → wait for cache → retire old <code>kid</code>&quot; with zero downtime. Emergency revocation via &quot;Live Service Hub&quot; (separate operational channel).</p>
+<p><strong>Self-stated gap</strong>: <em>&quot;It is currently not possible to reassign ownership if someone leaves.&quot;</em> — One Login admits this. <strong>AMp should design ownership-reassignment from day one.</strong></p>
+<p><strong>6-stage tech doc lifecycle</strong> (sidebar nav structure):</p>
+<ol>
+<li>How GOV.UK One Login Works</li>
+<li>Quick Start</li>
+<li>Before You Integrate</li>
+<li>Integrate with Integration Environment</li>
+<li>Test Your Integration</li>
+<li>Configure Your Service for Production</li>
+</ol>
+<p>This is the third independent confirmation of the 6-stage integration lifecycle (<a class="xref" href="#5-the-consumer-technical-integration-journey-post-grant">§5</a>).</p>
+<p><strong>Open source</strong> — <a href="https://github.com/govuk-one-login"><code>govuk-one-login/</code></a> has 30+ TypeScript/Java repos. The tech-docs repo at <a href="https://github.com/govuk-one-login/tech-docs"><code>govuk-one-login/tech-docs</code></a> is itself published using the GDS Tech Docs Template (<a class="xref" href="#74-gds-tech-docs-template-the-de-facto-pattern">§7.4</a>).</p>
+<p><strong>Key One Login lessons for AMp</strong>:</p>
+<ul>
+<li><strong>Adopt the JWKS-first key model</strong> — the platform should not issue secrets. Consumer organisations publish public keys; the platform validates signatures. Rotation responsibility lives with the consumer.</li>
+<li><strong>Self-serve registration in 5 minutes with no approval gate</strong> — approval lives at production, not at signup.</li>
+<li><strong>Plan for ownership reassignment</strong> from day one. Don&#39;t tie a Service or Organisation immutably to a single user&#39;s email.</li>
+<li><strong>Sector identifier-style immutable fields</strong> are a useful pattern for fields where late changes break the system.</li>
+<li><strong>Three-app pattern</strong> (main / admin / docs) is a possible architecture — see <a class="xref" href="#9-docs-surface-decision-single-app-vs-two-app">§9</a>.</li>
+</ul>
+<h3 id="74-gds-tech-docs-template-the-de-facto-pattern"><a class="anchor" href="#74-gds-tech-docs-template-the-de-facto-pattern" aria-label="Link to 7.4 GDS Tech Docs Template — the de facto pattern">#</a>7.4 GDS Tech Docs Template — the de facto pattern</h3>
+<p>The standard GDS pattern for technical documentation across UK government.</p>
+<ul>
+<li><a href="https://github.com/alphagov/tech-docs-template"><code>alphagov/tech-docs-template</code></a> — canonical Middleman-based template. 81★, 35 forks, MIT, actively maintained.</li>
+<li><a href="https://github.com/alphagov/tech-docs-gem"><code>alphagov/tech-docs-gem</code></a> — distributed as a Ruby gem.</li>
+<li><a href="https://github.com/alphagov/tech-docs-linter"><code>alphagov/tech-docs-linter</code></a> — Vale ruleset enforcing GDS content standards.</li>
+</ul>
+<p><strong>Production services using it</strong> (all actively maintained):</p>
+<ul>
+<li>GOV.UK One Login → <a href="https://github.com/govuk-one-login/tech-docs"><code>govuk-one-login/tech-docs</code></a></li>
+<li>GOV.UK Pay → <a href="https://github.com/alphagov/pay-tech-docs"><code>alphagov/pay-tech-docs</code></a></li>
+<li>GOV.UK Notify → <a href="https://github.com/alphagov/notifications-tech-docs"><code>alphagov/notifications-tech-docs</code></a></li>
+<li>data.gov.uk → <a href="https://github.com/alphagov/datagovuk-tech-docs"><code>alphagov/datagovuk-tech-docs</code></a></li>
+<li>GOV.UK Developer Docs → <a href="https://github.com/alphagov/govuk-developer-docs"><code>alphagov/govuk-developer-docs</code></a></li>
+</ul>
+<p><strong>What the template ships</strong>: Middleman generator · built-in GOV.UK styling · Mermaid (<code>.mmd</code> → SVG) + draw.io (<code>.drawio</code> → SVG) diagram pipelines · Vale linter with <code>tech-docs-linter</code> ruleset · AWS CloudFormation deploy template · Docker preview script · MIT code + Open Government Licence 3.0 content.</p>
+<p><strong>Five+ flagship gov services use this</strong> — that&#39;s a de facto standard. See <a class="xref" href="#9-docs-surface-decision-single-app-vs-two-app">§9</a> for the architectural choice this implies.</p>
+<hr>
+<h2 id="8-the-architectural-fork-gateway-vs-broker"><a class="anchor" href="#8-the-architectural-fork-gateway-vs-broker" aria-label="Link to 8. The architectural fork — **Gateway** vs **Broker**">#</a>8. The architectural fork — **Gateway** vs **Broker**</h2>
+<p>This is the single biggest decision in the spec. The Miro artefacts implicitly disagree with each other on this, and the answer determines roughly half of the build cost.</p>
+<h3 id="81-the-two-options"><a class="anchor" href="#81-the-two-options" aria-label="Link to 8.1 The two options">#</a>8.1 The two options</h3>
+<div class="amp-table-wrap"><table class="amp-table"><thead><tr><th>Aspect</th><th><strong>Gateway-mode AMp</strong></th><th><strong>Broker-mode AMp</strong></th></tr></thead><tbody><tr><td>Runtime traffic</td><td>Consumer → AMp gateway → Producer service</td><td>Consumer → directly to Producer service</td></tr><tr><td>Rate limit enforcement</td><td><strong>Central</strong> (AMp gateway, SpikeArrest-style)</td><td>Producer-enforced (each producer runs their own)</td></tr><tr><td>Auth</td><td>AMp issues / validates tokens</td><td>Producer&#39;s own auth</td></tr><tr><td>Audit / observability</td><td>Central; AMp sees every call</td><td>Distributed; only producer sees calls</td></tr><tr><td>Credential management</td><td>AMp issues + rotates</td><td>Producer issues; or JWKS-first (One Login pattern)</td></tr><tr><td>Producer tooling needed</td><td>Spec-to-proxy automation (NHS Proxygen-style)</td><td>None beyond catalogue listing</td></tr><tr><td>Day-1 build cost</td><td><strong>High</strong> — stand up Azure APIM (or equivalent), proxy automation, OAuth server, key management, monitoring</td><td><strong>Low</strong> — catalogue + request paperwork only</td></tr><tr><td>Day-N migration cost</td><td>—</td><td><strong>High</strong> — retrofitting a gateway later is painful, especially across many APIs</td></tr><tr><td>Strategic value</td><td>Strong — AMp becomes the platform itself</td><td>Weaker — AMp is a directory and process tool</td></tr><tr><td>Fits Miro Access Request flow?</td><td>Tension — Miro shows producer &quot;issues credentials&quot; at OUTCOME ✓</td><td>Yes</td></tr><tr><td>Fits Capabilities CSV?</td><td>Yes — &quot;define rate limits, SLAs&quot; implies central enforcement</td><td>Tension — central rate limits hard without gateway</td></tr><tr><td>What NHS does</td><td>Gateway (Apigee Edge)</td><td>—</td></tr><tr><td>What HMRC does</td><td>Gateway</td><td>—</td></tr><tr><td>What One Login does</td><td>Gateway (itself an OAuth/OIDC provider)</td><td>—</td></tr></tbody></table></div>
+<h3 id="82-the-miro-artefacts-disagree-with-each-other"><a class="anchor" href="#82-the-miro-artefacts-disagree-with-each-other" aria-label="Link to 8.2 The Miro artefacts disagree with each other">#</a>8.2 The Miro artefacts disagree with each other</h3>
+<div class="amp-table-wrap"><table class="amp-table"><thead><tr><th>Artefact</th><th>Implies</th><th>Why</th></tr></thead><tbody><tr><td>Miro Access Request flow</td><td>Broker</td><td>Producer &quot;Approves — issues credentials and sets limits&quot; at OUTCOME ✓</td></tr><tr><td>Miro Full swimlane</td><td>Broker</td><td>Same — credentials issued by producer</td></tr><tr><td>Capabilities CSV &quot;Define rate limits, SLAs and usage policies&quot;</td><td>Gateway</td><td>Rate limit enforcement implies a central point</td></tr><tr><td>Capabilities CSV &quot;Audit trail of all review decisions&quot;</td><td>Either</td><td>Decision audit doesn&#39;t require traffic gateway</td></tr><tr><td>Capabilities CSV &quot;Track most popular / most used APIs&quot;</td><td>Gateway-leaning</td><td>Usage analytics require seeing traffic</td></tr></tbody></table></div>
+<h3 id="83-proposed-default-broker-v1-gateway-adapter-from-day-one"><a class="anchor" href="#83-proposed-default-broker-v1-gateway-adapter-from-day-one" aria-label="Link to 8.3 Proposed default: **Broker v1, gateway adapter from day one**">#</a>8.3 Proposed default: **Broker v1, gateway adapter from day one**</h3>
+<p><strong>Proposed default</strong>: Build AMp in <strong>broker mode</strong> for v1, with a clean adapter boundary so a gateway can be layered on later when (a) HMCTS stands up an APIM, or (b) a specific producer wants to outsource their gateway concerns to AMp.</p>
+<p><strong>Reasoning</strong>:</p>
+<ul>
+<li>Broker-mode v1 ships faster and serves both the catalogue and the demand-signalling journey (<a class="xref" href="#42-consumer-wants-data-that-doesnt-exist-new-api-request-demand-signalling">§4.2</a>) immediately.</li>
+<li>The five Miro journeys are all <em>transactional</em> — none require runtime traffic interception. The marketplace can fulfil all five journeys as a broker.</li>
+<li>Federated ownership (AMp principle 5 — &quot;product teams own end-to-end&quot;) aligns more naturally with broker-mode.</li>
+<li>Adopting the <strong>One Login JWKS-first model</strong> for credentials (<a class="xref" href="#73-govuk-one-login">§7.3</a>) removes the strongest argument for gateway-mode (centralised secret issuance) without needing a gateway.</li>
+<li>Rate limits in broker mode can be <strong>declarative metadata on the listing</strong> (producer states &quot;I rate-limit at 1000 rpm&quot;) rather than centrally enforced. Capabilities CSV remains satisfied.</li>
+<li>The adapter pattern keeps the door open: if/when HMCTS deploys Azure APIM, the AMp listing&#39;s &quot;access policy&quot; payload can be machine-readable enough to provision an APIM subscription automatically.</li>
+</ul>
+<p><strong>This is a recommendation, not a decision.</strong> The team may decide that being a gateway from day one is the right strategic bet — in which case the spec changes shape substantially. See <a class="xref" href="#113-gateway-or-broker">§11.3</a>.</p>
+<hr>
+<h2 id="9-docs-surface-decision-single-app-vs-two-app"><a class="anchor" href="#9-docs-surface-decision-single-app-vs-two-app" aria-label="Link to 9. Docs surface decision — single-app vs two-app">#</a>9. Docs surface decision — single-app vs two-app</h2>
+<p>A separate but related architectural question. Three options, each viable.</p>
+<h3 id="option-1-single-nextjs-app-content-in-mdxmarkdown"><a class="anchor" href="#option-1-single-nextjs-app-content-in-mdxmarkdown" aria-label="Link to Option 1 — Single Next.js app, content in MDX/Markdown">#</a>Option 1 — Single Next.js app, content in MDX/Markdown</h3>
+<ul>
+<li>One stack, one repo, one CI/CD pipeline.</li>
+<li>Content authors contribute MDX files directly into the repo.</li>
+<li>We re-implement (or skip) what the GDS tech-docs-template solves: Vale linter, Mermaid+drawio diagram pipeline, gov-conformant content styling.</li>
+<li><strong>Pro</strong>: stack simplicity.</li>
+<li><strong>Con</strong>: reinvents gov-standard tooling.</li>
+</ul>
+<h3 id="option-2-two-app-pattern-nextjs-gds-tech-docs-template-recommended"><a class="anchor" href="#option-2-two-app-pattern-nextjs-gds-tech-docs-template-recommended" aria-label="Link to Option 2 — Two-app pattern: Next.js + GDS tech-docs-template (**Recommended**)">#</a>Option 2 — Two-app pattern: Next.js + GDS tech-docs-template (**Recommended**)</h3>
+<ul>
+<li>Catalogue + dashboards + wizards live in <strong>Next.js</strong> at <code>amp-site</code> (or similar).</li>
+<li>Vision, principles, playbook, glossary, recipes, decisions, integration guides live in a <strong>separate <code>amp-site-docs</code> repo</strong> using the GDS Tech Docs Template.</li>
+<li>Tech writers contribute Markdown with Vale linting on every PR.</li>
+<li>Mirrors what GOV.UK Pay, Notify, One Login, data.gov.uk all do.</li>
+<li><strong>Pro</strong>: industry-conformant; tech writers across UK gov feel at home; content quality enforced automatically; tooling already solved.</li>
+<li><strong>Con</strong>: Ruby/Middleman runtime added to the team&#39;s surface area; two repos to keep in sync.</li>
+</ul>
+<h3 id="option-3-three-app-pattern-catalogue-admin-docs"><a class="anchor" href="#option-3-three-app-pattern-catalogue-admin-docs" aria-label="Link to Option 3 — Three-app pattern: catalogue + admin + docs">#</a>Option 3 — Three-app pattern: catalogue + admin + docs</h3>
+<ul>
+<li>As Option 2 but with <strong>admin</strong> split from the catalogue/public site too.</li>
+<li>Matches One Login&#39;s actual architecture.</li>
+<li><strong>Pro</strong>: clean separation of public read-only catalogue from authenticated admin.</li>
+<li><strong>Con</strong>: heaviest split; only worth it if admin self-serve will evolve very differently from the consumer-facing catalogue. AMp v1 probably doesn&#39;t need this.</li>
+</ul>
+<h3 id="proposed-default-option-2"><a class="anchor" href="#proposed-default-option-2" aria-label="Link to Proposed default: **Option 2**">#</a>Proposed default: **Option 2**</h3>
+<p>Reasons: (a) the docs ARE the integration journey, and the integration journey is a known-good 6-stage shape (<a class="xref" href="#5-the-consumer-technical-integration-journey-post-grant">§5</a>) that maps cleanly to a static site; (b) Vale + GDS content tooling save us reimplementing content quality; (c) tech writers in HMCTS and across gov already know the pattern; (d) docs can ship independently of app releases.</p>
+<p><strong>Implication</strong>: the amp-site working directory likely needs two siblings — a <code>web</code> (Next.js) and a <code>docs</code> (Middleman) sub-tree, or two separate repos. Layout TBD in design phase.</p>
+<hr>
+<h2 id="10-reconciliation-deltas-across-artefacts"><a class="anchor" href="#10-reconciliation-deltas-across-artefacts" aria-label="Link to 10. Reconciliation deltas across artefacts">#</a>10. Reconciliation deltas across artefacts</h2>
+<p>Where the source artefacts disagree. Resolving each is part of the <a class="xref" href="#11-open-questions-with-proposed-defaults">§11</a> open questions; this table is a single index so nobody has to remember which artefact said what.</p>
+<div class="amp-table-wrap amp-table--wide"><table class="amp-table"><thead><tr><th>Topic</th><th>Miro Intro</th><th>Miro Producer flow</th><th>Miro Full swimlane</th><th>Miro Five Flows</th><th>Capabilities CSV</th><th>HTML prototype</th><th><code>api-marketplace-product</code> repo</th><th>Resolution path</th></tr></thead><tbody><tr><td>Role name</td><td>&quot;API <strong>Provider</strong>&quot;</td><td>&quot;Producer&quot;</td><td>&quot;Producer / API Owner&quot;</td><td>&quot;Producer&quot;</td><td>&quot;Producer&quot;</td><td>&quot;Producer&quot;</td><td>&quot;producer&quot;</td><td><a class="xref" href="#111-producer-or-provider">§11.1</a> — pick one</td></tr><tr><td>Reviewer role owner</td><td>—</td><td>&quot;Approver TBD&quot;</td><td>sticky: <em>&quot;Who is the review?&quot;</em></td><td>&quot;Reviewer notified — TBD&quot;</td><td>&quot;Reviewer&quot; (no owner)</td><td>self-registers via auth screen</td><td>not mentioned</td><td><a class="xref" href="#112-who-is-the-reviewer">§11.2</a> — assign</td></tr><tr><td>Approval gates</td><td>—</td><td>publication only</td><td>both publication and access</td><td>both</td><td>both</td><td>only publication explicit</td><td>producer + governance</td><td>already aligned — both</td></tr><tr><td>Publication outcomes</td><td>—</td><td>Approve / Reject</td><td>Approve / Reject</td><td><strong>Approve / Query / Reject</strong></td><td>&quot;Approve, <strong>conditionally approve</strong>, or reject&quot;</td><td>Approve / Reject</td><td>not specified</td><td><a class="xref" href="#118-publication-review-outcomes-2-3-or-4">§11.8</a></td></tr><tr><td>Access policy values</td><td>—</td><td>not stated</td><td>not stated</td><td><strong>Open / Request-based / Restricted</strong></td><td><strong>Open / Restricted / Partner-only</strong></td><td>not specified</td><td>not specified</td><td><a class="xref" href="#115-access-policy-values">§11.5</a></td></tr><tr><td>Credential model</td><td>—</td><td>&quot;Issues credentials&quot;</td><td>&quot;Issues credentials and sets limits&quot;</td><td>&quot;Credentials issued, rate limits&quot;</td><td>&quot;Define rate limits at publication&quot;</td><td>not specified</td><td>federated</td><td><a class="xref" href="#117-status-taxonomy">§11.7</a> — JWKS-first proposed</td></tr><tr><td>Anonymous browse</td><td>—</td><td>—</td><td>yes (Discovery before Registration)</td><td>yes (Consumer flow)</td><td>&quot;Support unauthenticated browsing&quot;</td><td>yes (home page public)</td><td>implicit</td><td>aligned — yes</td></tr><tr><td>API transfer flow</td><td>—</td><td>—</td><td>yes (auxiliary)</td><td>not shown</td><td>not mentioned</td><td>not in prototype</td><td>not in docs</td><td>new requirement; thin detail; needs working session</td></tr><tr><td>SLA targets</td><td>—</td><td>—</td><td>&quot;SLA timer starts&quot; (×2)</td><td><strong>5 days / 3 days</strong> for &quot;more info&quot;</td><td>not stated</td><td>not implemented</td><td>not specified</td><td><a class="xref" href="#119-sla-targets">§11.9</a></td></tr><tr><td>Maturity / status taxonomy</td><td>—</td><td>pending/queried/rejected/live</td><td>—</td><td>same</td><td><strong>Beta / Stable / Deprecated</strong></td><td>In dev / Beta / In production / Deprecated / Retired</td><td>not stated</td><td><a class="xref" href="#117-status-taxonomy">§11.7</a> — two-axis model proposed</td></tr><tr><td>Multi-version</td><td>—</td><td>&quot;version&quot; field</td><td>—</td><td>—</td><td>&quot;<strong>Manage multiple versions simultaneously</strong>&quot;</td><td>single-version per listing</td><td>not specified</td><td>proposed: adopt HMRC version-as-subscription pattern</td></tr><tr><td>Rate limits</td><td>—</td><td>not stated</td><td>not stated</td><td>&quot;Sets limits&quot; at access grant</td><td>&quot;Define at publication time&quot; + per-grant</td><td>&quot;Volumes&quot; field on request</td><td>not specified</td><td>proposed: both — producer sets defaults, access grant can override</td></tr><tr><td>Role list</td><td>Consumer / Provider</td><td>Consumer / Producer / Reviewer</td><td>same + Admin (implicit at escalation)</td><td>+ Admin (explicit at SLA breach)</td><td>Consumer / Producer / Reviewer / <strong>Admin</strong></td><td>Consumer / Producer / Reviewer</td><td>producer / consumer</td><td>resolved — 4 roles</td></tr><tr><td>Recommender / analytics / change logs</td><td>—</td><td>—</td><td>—</td><td>—</td><td>yes</td><td>partial</td><td>not stated</td><td><a class="xref" href="#1111-are-recommender-analytics-change-logs-mvp">§11.11</a> — MVP?</td></tr><tr><td>Organisation entity</td><td>—</td><td>&quot;Organisation and team details&quot; at registration</td><td>—</td><td>—</td><td>&quot;organisation onboarding&quot;</td><td>&quot;Organisation&quot; field on profile</td><td>not modelled</td><td><a class="xref" href="#11-open-questions-with-proposed-defaults">§11</a>.x — proposed yes</td></tr><tr><td>Application entity</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>not in any AMp artefact; HMRC/One-Login imported — <a class="xref" href="#11-open-questions-with-proposed-defaults">§11</a>.x proposed</td></tr><tr><td>DPIAs</td><td>—</td><td>—</td><td>—</td><td>sticky: <em>&quot;DPIA&#39;s?&quot;</em></td><td>—</td><td>—</td><td>not mentioned</td><td><a class="xref" href="#1110-dpias-in-publication-review">§11.10</a></td></tr><tr><td>Public/private data flag</td><td>—</td><td>—</td><td>—</td><td>sticky: open</td><td>&quot;Display data classification labels e.g. public private?&quot;</td><td>data classification field (Official/Sensitive/Restricted)</td><td>not stated</td><td><a class="xref" href="#116-public-private-data-flag-what-does-anonymous-browse-reveal">§11.6</a></td></tr></tbody></table></div>
+<hr>
+<h2 id="11-open-questions-with-proposed-defaults"><a class="anchor" href="#11-open-questions-with-proposed-defaults" aria-label="Link to 11. Open questions (with proposed defaults)">#</a>11. Open questions (with proposed defaults)</h2>
+<p>All open questions are stated as questions, <strong>followed by a proposed default</strong>. The reader is invited to push back where they disagree; defaults are starting positions, not decisions.</p>
+<h3 id="111-producer-or-provider"><a class="anchor" href="#111-producer-or-provider" aria-label="Link to 11.1 Producer or Provider?">#</a>11.1 Producer or Provider?</h3>
+<p>Miro Introduction frame uses <strong>Provider</strong>. Every other artefact uses <strong>Producer</strong>. The terms are semantically interchangeable.</p>
+<p><strong>Proposed default</strong>: <strong>Producer</strong>.</p>
+<p><em>Reasons</em>: (a) consistent with the existing HMCTS <code>api-marketplace-product</code> repo, the HTML prototype, and the four detailed Miro flows; (b) &quot;Producer&quot; is a more active term — implies ownership and operation, not just authorship; (c) only the static Introduction frame uses &quot;Provider&quot; and updating one frame is cheaper than updating six places.</p>
+<h3 id="112-who-is-the-reviewer"><a class="anchor" href="#112-who-is-the-reviewer" aria-label="Link to 11.2 Who is the Reviewer?">#</a>11.2 Who is the Reviewer?</h3>
+<p>The Reviewer role exists in every artefact, but the owning team is unnamed. Candidates: AMp product team, HMCTS API Governance Board, HMCTS Common Platform Architecture, or some hybrid.</p>
+<p><strong>Proposed default</strong>: <strong>AMp product team are the Reviewers for v1</strong>, with explicit escalation paths to (a) Architecture for technical concerns and (b) Information Governance for data-classification concerns.</p>
+<p><em>Reasons</em>: keeps the workflow moving without convening a board for every listing; AMp team has the day-to-day relationship with both producers and consumers; escalation paths preserve governance for the cases that need it.</p>
+<h3 id="113-gateway-or-broker"><a class="anchor" href="#113-gateway-or-broker" aria-label="Link to 11.3 Gateway or broker?">#</a>11.3 Gateway or broker?</h3>
+<p>The architectural fork (<a class="xref" href="#8-the-architectural-fork-gateway-vs-broker">§8</a>).</p>
+<p><strong>Proposed default</strong>: <strong>Broker v1, gateway adapter from day one</strong>, with the JWKS-first key model adopted from One Login.</p>
+<p><em>See <a class="xref" href="#83-proposed-default-broker-v1-gateway-adapter-from-day-one">§8.3</a> for reasoning.</em></p>
+<h3 id="114-how-are-access-requests-routed"><a class="anchor" href="#114-how-are-access-requests-routed" aria-label="Link to 11.4 How are access requests routed?">#</a>11.4 How are access requests routed?</h3>
+<p>Always to the producer? Or do some go to AMp Admin (e.g. cross-cutting, highly sensitive, or where the producer team is unresponsive)? The Miro sticky <em>&quot;Requests to owner?&quot;</em> flags this as open.</p>
+<p><strong>Proposed default</strong>: <strong>Default route is to the producer</strong>, with two override paths:</p>
+<ul>
+<li>Listings flagged at <em>Official-Sensitive</em> or <em>Restricted</em> classification → additional Reviewer compliance check (Miro full swimlane has this as the <em>&quot;Checks Compliance&quot;</em> node)</li>
+<li>Requests escalated due to producer non-response (SLA breach) → route to Admin</li>
+</ul>
+<h3 id="115-access-policy-values"><a class="anchor" href="#115-access-policy-values" aria-label="Link to 11.5 Access policy values">#</a>11.5 Access policy values</h3>
+<p>Two competing taxonomies:</p>
+<ul>
+<li>Miro Producer flow: <strong>Open / Request-based / Restricted</strong></li>
+<li>Capabilities CSV: <strong>Open / Restricted / Partner-only</strong></li>
+</ul>
+<p><strong>Proposed default</strong>: <strong>Open / Request-based / Restricted / Partner-only</strong> (union of both, four values).</p>
+<p><em>Definitions</em>:</p>
+<ul>
+<li><strong>Open</strong> — listed in catalogue, anyone can integrate; no access request needed.</li>
+<li><strong>Request-based</strong> — listed in catalogue, integration requires an approved access request (the default for most APIs).</li>
+<li><strong>Restricted</strong> — listed in catalogue with masked detail; integration requires approval + heightened scrutiny (Reviewer compliance check).</li>
+<li><strong>Partner-only</strong> — listed only to logged-in users from a pre-approved partner Organisation (visibility-gated, not just access-gated).</li>
+</ul>
+<h3 id="116-public-private-data-flag-what-does-anonymous-browse-reveal"><a class="anchor" href="#116-public-private-data-flag-what-does-anonymous-browse-reveal" aria-label="Link to 11.6 Public / private data flag — what does anonymous browse reveal?">#</a>11.6 Public / private data flag — what does anonymous browse reveal?</h3>
+<p>Miro stickies repeatedly flag this: <em>&quot;Display data classification labels e.g. public / private?&quot;</em> and <em>&quot;Search public data without logging.&quot;</em></p>
+<p><strong>Proposed default</strong>: <strong>The catalogue&#39;s listing visibility is governed by the access policy (11.5), not by data classification.</strong></p>
+<ul>
+<li>Open, Request-based, Restricted listings → visible to anonymous visitors with full metadata, including data classification badge.</li>
+<li>Partner-only listings → visible only to logged-in users whose Organisation is on the approved-partner list.</li>
+<li>Data classification (Official / Official-Sensitive / Restricted) is <strong>always shown as a badge</strong> on the listing, regardless of access policy. The classification itself is metadata, not a hiding rule.</li>
+</ul>
+<h3 id="117-status-taxonomy"><a class="anchor" href="#117-status-taxonomy" aria-label="Link to 11.7 Status taxonomy">#</a>11.7 Status taxonomy</h3>
+<p>The artefacts use three different status models:</p>
+<ul>
+<li>Prototype: <em>In development / Beta / In production / Deprecated / Retired</em></li>
+<li>Capabilities CSV: <em>Beta / Stable / Deprecated</em></li>
+<li>Miro Publication Review flow: <em>pending / queried / rejected / live</em></li>
+</ul>
+<p>These are actually <strong>two different axes</strong> that have been conflated.</p>
+<p><strong>Proposed default — two-axis status model</strong>:</p>
+<p><strong>Axis 1 — Lifecycle status</strong> (the API&#39;s maturity, surfaced to consumers):</p>
+<ul>
+<li><code>in-development</code> — being designed/built; not yet in catalogue</li>
+<li><code>beta</code> — published, available for integration, breaking changes possible</li>
+<li><code>stable</code> — published, breaking changes only with 6 months notice (HMRC pattern)</li>
+<li><code>deprecated</code> — still works but a successor exists; new integrations discouraged</li>
+<li><code>retired</code> — no longer accessible</li>
+</ul>
+<p><strong>Axis 2 — Listing workflow status</strong> (the AMp record&#39;s state, internal):</p>
+<ul>
+<li><code>draft</code> — producer is editing, not yet submitted</li>
+<li><code>pending</code> — submitted to Reviewer</li>
+<li><code>queried</code> — Reviewer requested clarification</li>
+<li><code>rejected</code> — Reviewer rejected with reason; producer needs to rework</li>
+<li><code>live</code> — approved and visible</li>
+<li><code>withdrawn</code> — producer withdrew from catalogue</li>
+</ul>
+<p>A listing can be <em>(beta, live)</em> or <em>(deprecated, live)</em> or <em>(in-development, draft)</em> etc. Multiple status badges on a listing (NHS pattern) reflect both axes.</p>
+<h3 id="118-publication-review-outcomes-2-3-or-4"><a class="anchor" href="#118-publication-review-outcomes-2-3-or-4" aria-label="Link to 11.8 Publication review outcomes — 2, 3, or 4?">#</a>11.8 Publication review outcomes — 2, 3, or 4?</h3>
+<ul>
+<li>Producer flow (Miro): 2 — Approve / Reject</li>
+<li>Publication Review flow (Miro): 3 — Approve / Query / Reject</li>
+<li>Capabilities CSV: implied 4 — Approve / Conditionally approve / Query / Reject</li>
+</ul>
+<p><strong>Proposed default</strong>: <strong>4 outcomes</strong> as the Capabilities CSV suggests. Definitions:</p>
+<ul>
+<li><strong>Approve</strong> — listing goes live as submitted.</li>
+<li><strong>Conditionally approve</strong> — listing goes live with reviewer-issued conditions (e.g. &quot;must add OAuth flow documentation within 30 days&quot;). Status: live, but flagged with an outstanding condition visible to the producer.</li>
+<li><strong>Query</strong> — reviewer needs information before deciding. Status: queried. Producer responds; review re-enters the queue.</li>
+<li><strong>Reject</strong> — listing does not go live. Mandatory reason. Producer reworks and resubmits.</li>
+</ul>
+<h3 id="119-sla-targets"><a class="anchor" href="#119-sla-targets" aria-label="Link to 11.9 SLA targets">#</a>11.9 SLA targets</h3>
+<p>Concrete numbers needed for SLAs the artefacts flag as having timers.</p>
+<p><strong>Proposed defaults</strong> (cribbed from HMRC and the Miro Access Request flow):</p>
+<div class="amp-table-wrap"><table class="amp-table"><thead><tr><th>SLA</th><th>Proposed default</th><th>Source</th></tr></thead><tbody><tr><td>Publication review SLA — Reviewer responds</td><td><strong>5 business days</strong></td><td>proposed</td></tr><tr><td>Access request — Producer initial response</td><td><strong>5 business days</strong></td><td>proposed</td></tr><tr><td>Consumer response to &quot;more info&quot; request</td><td><strong>5 business days</strong></td><td>Miro flow (explicit)</td></tr><tr><td>Inactivity → admin escalation</td><td><strong>3 days within the 5-day window</strong></td><td>Miro flow (explicit)</td></tr><tr><td>Production go-live assessment (if AMp adds one)</td><td><strong>10 working days</strong></td><td>HMRC pattern</td></tr><tr><td>Breaking change notice</td><td><strong>6 months minimum</strong></td><td>HMRC pattern</td></tr><tr><td>Deprecation-to-retirement notice</td><td><strong>12 months minimum</strong></td><td>proposed</td></tr></tbody></table></div>
+<h3 id="1110-dpias-in-publication-review"><a class="anchor" href="#1110-dpias-in-publication-review" aria-label="Link to 11.10 DPIAs in publication review?">#</a>11.10 DPIAs in publication review?</h3>
+<p>Miro sticky: <em>&quot;DPIA&#39;s?&quot;</em> — open question whether Data Protection Impact Assessments are required as part of publication review.</p>
+<p><strong>Proposed default</strong>: <strong>Conditional on data classification.</strong></p>
+<ul>
+<li>Official → no DPIA required at publication.</li>
+<li>Official-Sensitive → DPIA URL must be linked in the listing; reviewed.</li>
+<li>Restricted → DPIA must be linked and reviewed; AMp Information Governance escalation route activated.</li>
+</ul>
+<h3 id="1111-are-recommender-analytics-change-logs-mvp"><a class="anchor" href="#1111-are-recommender-analytics-change-logs-mvp" aria-label="Link to 11.11 Are recommender / analytics / change logs MVP?">#</a>11.11 Are recommender / analytics / change logs MVP?</h3>
+<p>Capabilities CSV calls for: surface related APIs, popularity ranking, change logs, release notes. None of these appear in the Miro journeys.</p>
+<p><strong>Proposed default</strong>: <strong>Not MVP. Phase 2 features.</strong></p>
+<ul>
+<li>Change logs — yes if cheap (auto-extracted from version metadata) — borderline MVP.</li>
+<li>Release notes — producer-authored; defer to Phase 2.</li>
+<li>Related APIs / &quot;you might also like&quot; — defer to Phase 2; needs catalogue density before useful.</li>
+<li>Popularity ranking — defer to Phase 2; requires usage analytics, which is broker-mode infeasible (<a class="xref" href="#8-the-architectural-fork-gateway-vs-broker">§8</a>).</li>
+</ul>
+<h3 id="1112-what-do-the-two-stand-alone-mvp-markers-in-the-capabilities-csv-refer-to"><a class="anchor" href="#1112-what-do-the-two-stand-alone-mvp-markers-in-the-capabilities-csv-refer-to" aria-label="Link to 11.12 What do the two stand-alone "MVP" markers in the Capabilities CSV refer to?">#</a>11.12 What do the two stand-alone "MVP" markers in the Capabilities CSV refer to?</h3>
+<p>The CSV has two unattached &quot;MVP&quot; markers under <a class="xref" href="#61-api-catalogue-discovery">§6.1</a> (API Catalogue &amp; Discovery), positioned after &quot;Support semantic / tag-based search&quot;. They could plausibly mark: (a) the first two capabilities in <a class="xref" href="#61-api-catalogue-discovery">§6.1</a>; (b) some specific capabilities in adjacent rows; or (c) be aspirational placeholders.</p>
+<p><strong>Proposed default</strong>: <strong>MVP scope is &quot;Browse + View + Filter&quot; — the first three capabilities in <a class="xref" href="#61-api-catalogue-discovery">§6.1</a> plus &quot;Show API ownership, version and lifecycle status&quot; and &quot;Support unauthenticated browsing for open/public APIs&quot;.</strong> Treat semantic/tag search, recommenders, and data-classification-aware visibility as Phase 2.</p>
+<p>This is a flag to confirm with whoever placed the MVP markers in Miro. <strong>The CSV is WIP per the team.</strong></p>
+<h3 id="1113-docs-surface-architecture"><a class="anchor" href="#1113-docs-surface-architecture" aria-label="Link to 11.13 Docs surface architecture">#</a>11.13 Docs surface architecture</h3>
+<p>Single Next.js app with MDX content, or two-app pattern with the GDS Tech Docs Template for docs? (<a class="xref" href="#9-docs-surface-decision-single-app-vs-two-app">§9</a>)</p>
+<p><strong>Proposed default</strong>: <strong>Two-app pattern (Option 2 in <a class="xref" href="#9-docs-surface-decision-single-app-vs-two-app">§9</a>)</strong> — Next.js for amp-site, GDS Tech Docs Template for amp-site-docs.</p>
+<h3 id="1114-adopt-organisation-application-subscription-as-first-class-entities"><a class="anchor" href="#1114-adopt-organisation-application-subscription-as-first-class-entities" aria-label="Link to 11.14 Adopt Organisation + Application + Subscription as first-class entities?">#</a>11.14 Adopt Organisation + Application + Subscription as first-class entities?</h3>
+<p>(<a class="xref" href="#32-candidate-first-class-entities">§3.2</a>)</p>
+<p><strong>Proposed default</strong>: <strong>Yes.</strong> HMRC and One Login both do; the model is battle-tested; it solves rate-limit, credential, and multi-version ownership cleanly.</p>
+<h3 id="1115-consumer-email-domain-validation-policy"><a class="anchor" href="#1115-consumer-email-domain-validation-policy" aria-label="Link to 11.15 Consumer email domain validation policy">#</a>11.15 Consumer email domain validation policy</h3>
+<p>From <a class="xref" href="#46-consumer-onboarding-derived-not-in-current-miro">§4.6</a>. Should AMp pre-validate the email domain at registration (block disposable/personal addresses, gate at the partner-list boundary), allow any address subject to manual review, or run a hybrid model?</p>
+<p><strong>Proposed default</strong>: <strong>Hybrid</strong>.</p>
+<ul>
+<li>Allow-list for HMCTS and approved gov domains (<code>*.gov.uk</code>, <code>*.justice.gov.uk</code>, <code>*.hmcts.gov.uk</code>, etc.) → immediate self-serve registration.</li>
+<li>Anything else → routed via the <em>Partner Organisation</em> alternate path in <a class="xref" href="#46-consumer-onboarding-derived-not-in-current-miro">§4.6</a>, requiring AMp Admin review.</li>
+<li>Block-list disposable email providers (Mailinator etc.) outright with a clear message.</li>
+</ul>
+<h3 id="1116-mfa-policy-at-registration"><a class="anchor" href="#1116-mfa-policy-at-registration" aria-label="Link to 11.16 MFA policy at registration">#</a>11.16 MFA policy at registration</h3>
+<p>From <a class="xref" href="#46-consumer-onboarding-derived-not-in-current-miro">§4.6</a>. Mobile-only (One Login pattern), TOTP-only (more inclusive for external partners without UK mobile numbers), or both available?</p>
+<p><strong>Proposed default</strong>: <strong>Both available; TOTP recommended.</strong></p>
+<ul>
+<li>TOTP authenticator app is the default offered (works for external partners; no SMS cost).</li>
+<li>Mobile SMS available as an alternative for users without authenticator apps.</li>
+<li>WebAuthn / passkeys as a Phase 2 enhancement.</li>
+<li>Backup codes generated and shown once at MFA setup (lost-device recovery).</li>
+</ul>
+<h3 id="1117-first-time-consumer-ux-after-signup"><a class="anchor" href="#1117-first-time-consumer-ux-after-signup" aria-label="Link to 11.17 First-time consumer UX after signup">#</a>11.17 First-time consumer UX after signup</h3>
+<p>From <a class="xref" href="#46-consumer-onboarding-derived-not-in-current-miro">§4.6</a>. Guided tour, &quot;browse 3 APIs&quot; nudge, or straight to the catalogue?</p>
+<p><strong>Proposed default</strong>: <strong>Straight to the catalogue, with a persistent welcome banner for 7 days</strong> offering a 2-minute video / quick-tour link. Don&#39;t block the consumer; do offer help on tap.</p>
+<h3 id="1118-producer-onboarding-initiation-and-ownership-transfer"><a class="anchor" href="#1118-producer-onboarding-initiation-and-ownership-transfer" aria-label="Link to 11.18 Producer onboarding initiation and ownership transfer">#</a>11.18 Producer onboarding initiation and ownership transfer</h3>
+<p>From <a class="xref" href="#47-producer-organisation-onboarding-derived-not-in-current-miro">§4.7</a>. Two related sub-questions:</p>
+<p>(a) <strong>Who can initiate Producer onboarding?</strong> Anyone with an account, or only nominated HMCTS contacts?</p>
+<p><strong>Proposed default</strong>: <strong>Anyone whose Organisation is on the approved-partner list.</strong> Non-partner Organisations must complete the <a class="xref" href="#46-consumer-onboarding-derived-not-in-current-miro">§4.6</a> Partner Organisation alternate path first.</p>
+<p>(b) <strong>Ownership-transfer mechanism</strong> (One Login self-stated gap from <a class="xref" href="#73-govuk-one-login">§7.3</a>)?</p>
+<p><strong>Proposed default</strong>: <strong>Three transfer modes</strong>:</p>
+<ol>
+<li><strong>Voluntary nomination</strong> — current Org Admin nominates a successor; transfer confirmed via email link.</li>
+<li><strong>Peer takeover</strong> — another existing Org Admin in the same Organisation can claim, no further approval needed.</li>
+<li><strong>AMp Admin force-transfer</strong> — for cases where the original Org Admin has left and not nominated a successor. Requires a written request, AMp Admin review, and is fully audited.</li>
+</ol>
+<h3 id="1119-per-api-ownership-within-an-organisation"><a class="anchor" href="#1119-per-api-ownership-within-an-organisation" aria-label="Link to 11.19 Per-API ownership within an Organisation">#</a>11.19 Per-API ownership within an Organisation</h3>
+<p>From <a class="xref" href="#47-producer-organisation-onboarding-derived-not-in-current-miro">§4.7</a>. When an Organisation has multiple teams, can an API be tied to a sub-team within the Organisation, or is the Organisation the only ownership unit?</p>
+<p><strong>Proposed default</strong>: <strong>Organisation is the ownership unit; sub-teams represented as labels/tags on the listing, not as separate owners.</strong> Reasons: (a) keeps the data model flat; (b) Organisation Admin always retains the override; (c) sub-team UX can be layered on later via tags + filtering without re-modelling. Re-visit if HMCTS-scale producers (e.g. the entire CPP Programme) need true sub-team isolation.</p>
+<hr>
+<h2 id="12-non-goals-for-this-document"><a class="anchor" href="#12-non-goals-for-this-document" aria-label="Link to 12. Non-goals for this document">#</a>12. Non-goals for this document</h2>
+<p>This document deliberately does <strong>not</strong>:</p>
+<ul>
+<li><strong>Propose an information architecture</strong> for amp-site (which pages, what hierarchy, what URL structure). That&#39;s design-phase.</li>
+<li><strong>Lock a tech stack</strong> beyond GOV.UK Design System adherence. Next.js + GDS Tech Docs Template is recommended but not bound.</li>
+<li><strong>Design any screens.</strong> No wireframes, no mockups, no copy beyond the verbatim Miro Introduction frame.</li>
+<li><strong>Define the database schema</strong> or API surface. Entity <em>candidates</em> are surfaced (<a class="xref" href="#32-candidate-first-class-entities">§3.2</a>) but not modelled.</li>
+<li><strong>Sequence the build.</strong> No phasing, no milestones, no MVP cut beyond surfacing the source artefact&#39;s MVP markers.</li>
+<li><strong>Replace the source artefacts.</strong> The Miro board remains canonical. This document is a synthesis aid, not a substitute.</li>
+</ul>
+<p>When this document is read and decisions on <a class="xref" href="#11-open-questions-with-proposed-defaults">§11</a> captured, the next phase is <strong>design</strong> (Phase 3 in the working plan), where the brainstorming and writing-plans skills produce the actual spec.</p>
+<hr>
+<h2 id="appendix-a-artefact-inventory"><a class="anchor" href="#appendix-a-artefact-inventory" aria-label="Link to Appendix A — Artefact inventory">#</a>Appendix A — Artefact inventory</h2>
+<p>Sources used in this discovery, in order of authority for product/journey decisions.</p>
+<div class="amp-table-wrap"><table class="amp-table"><thead><tr><th>Artefact</th><th>Path / URL</th><th>Status</th></tr></thead><tbody><tr><td>Miro board</td><td><code>https://miro.com/app/board/uXjVJW-oswM=/</code></td><td><strong>Canonical</strong> — primary source of product thinking</td></tr><tr><td>Miro Introduction frame (image)</td><td>shared in session 2026-05-20</td><td><strong>Canonical positioning copy</strong></td></tr><tr><td>Miro Full Journey Map (PDF)</td><td><code>~/Downloads/HMCTS API Marketplace.pdf</code> (page 1)</td><td><strong>Canonical journeys</strong></td></tr><tr><td>Miro Five Flows (PDF)</td><td><code>~/Downloads/HMCTS API Marketplace (1).pdf</code> (page 1)</td><td><strong>Canonical journeys, detailed</strong></td></tr><tr><td>Miro Capabilities (CSV)</td><td><code>~/Downloads/HMCTS API Marketplace.csv</code></td><td><strong>Canonical capabilities (WIP per team)</strong></td></tr><tr><td>NHS Architecture diagram (image)</td><td>shared in session 2026-05-20</td><td>reference — NHS layers</td></tr><tr><td>HTML prototype</td><td><code>~/Downloads/api-catalogue-v7 1.html</code></td><td><strong>Stale</strong> — earlier UX thinking, useful sandbox</td></tr><tr><td><code>api-amp/api-marketplace-product</code> repo</td><td><code>~/development/workspace/hmcts/api-amp/api-marketplace-product/</code></td><td><strong>Stale</strong> — earlier documentation thinking; some elements (vision, principles) likely still valid; the team has noted not to treat as authoritative</td></tr><tr><td>NHS Digital developer portal</td><td><code>https://digital.nhs.uk/developer</code> (front-end), architecture layers (image)</td><td>reference</td></tr><tr><td>HMRC Developer Hub</td><td><code>https://developer.service.hmrc.gov.uk/api-documentation</code></td><td>reference</td></tr><tr><td>GOV.UK One Login</td><td><code>https://docs.sign-in.service.gov.uk/</code> + admin tool + main service</td><td>reference</td></tr><tr><td>GDS Tech Docs Template</td><td><code>https://github.com/alphagov/tech-docs-template</code></td><td>reference</td></tr><tr><td>HMRC open-source domain models</td><td><code>https://github.com/hmrc/api-platform-*</code> (24+ Scala repos)</td><td>reference — useful when designing schema</td></tr></tbody></table></div>
+<h2 id="appendix-b-glossary"><a class="anchor" href="#appendix-b-glossary" aria-label="Link to Appendix B — Glossary">#</a>Appendix B — Glossary</h2>
+<p>Terms used in this document and their canonical definitions. Aligned with the existing AMp glossary in <code>api-amp/api-marketplace-product/playbook/glossary.md</code> where they overlap; extended where new entities are proposed.</p>
+<div class="amp-table-wrap"><table class="amp-table"><thead><tr><th>Term</th><th>Definition</th></tr></thead><tbody><tr><td>API Product / Listing</td><td>A managed, documented API offering with clear ownership, lifecycle controls, and published onboarding instructions.</td></tr><tr><td>API Version</td><td>A specific contract revision of an API. Producers may maintain multiple versions simultaneously.</td></tr><tr><td>Application (proposed entity)</td><td>A registered piece of consumer software that consumes APIs. Owned by an Organisation. Holds credentials, redirect URIs, environment binding.</td></tr><tr><td>Catalogue</td><td>The central registry of all API products available through the Marketplace.</td></tr><tr><td>Consumer</td><td>A team or service that integrates with an API product listed in the Marketplace.</td></tr><tr><td>Contract</td><td>The machine-readable and human-readable API definition (e.g. OpenAPI spec).</td></tr><tr><td>Data classification</td><td>Official / Official-Sensitive / Restricted. Always visible on listings regardless of access policy.</td></tr><tr><td>Decision audit</td><td>An auditable record of every Reviewer or Producer decision (approval, rejection, query, conditional approval, escalation).</td></tr><tr><td>JWKS endpoint</td><td>A consumer-published HTTPS URL returning JSON Web Key Set. Public keys used to validate signed JWTs. Adopted from One Login pattern.</td></tr><tr><td>Lifecycle status</td><td>The maturity of an API: in-development / beta / stable / deprecated / retired.</td></tr><tr><td>Listing workflow status</td><td>The state of a listing record in AMp: draft / pending / queried / rejected / live / withdrawn.</td></tr><tr><td>Organisation (proposed entity)</td><td>A team, department, or supplier. Users belong to Organisations. Applications and listings are owned by Organisations, not users.</td></tr><tr><td>Producer</td><td>A team that owns and publishes an API product through the Marketplace. (See <a class="xref" href="#111-producer-or-provider">§11.1</a> — naming TBD.)</td></tr><tr><td>Recipe</td><td>A reusable delivery pattern for a common API type, with documented trade-offs and a delivery checklist.</td></tr><tr><td>Reviewer</td><td>Marketplace governance role. Gates publications. Also compliance-checks sensitive access requests. (See <a class="xref" href="#112-who-is-the-reviewer">§11.2</a> — owner TBD.)</td></tr><tr><td>Subscription (proposed entity)</td><td>A binding of an Application to a specific API at a specific version. Holds rate limits, credentials, environment, and access status.</td></tr></tbody></table></div>
+
+  </main>
+
+</div>
+
+<button id="backToTop" type="button" aria-label="Back to top">↑ Top</button>
+
+<script>
+(function(){
+  // --- TOC active-section highlighting on scroll ---------------------------
+  const headings = Array.from(document.querySelectorAll('.amp-content h2, .amp-content h3'));
+  const tocLinks = new Map();
+  document.querySelectorAll('#toc a').forEach(a => {
+    tocLinks.set(a.dataset.target, a);
+  });
+
+  function setActive(slug) {
+    tocLinks.forEach(a => a.classList.remove('active'));
+    const link = tocLinks.get(slug);
+    if (link) {
+      link.classList.add('active');
+      // Scroll the TOC so the active item is visible
+      const sidebar = document.getElementById('sidebar');
+      const linkRect = link.getBoundingClientRect();
+      const sbRect = sidebar.getBoundingClientRect();
+      if (linkRect.top < sbRect.top + 60 || linkRect.bottom > sbRect.bottom - 20) {
+        link.scrollIntoView({ block: 'center', behavior: 'instant' });
+      }
+    }
+  }
+
+  if ('IntersectionObserver' in window) {
+    const obs = new IntersectionObserver((entries) => {
+      // pick the first heading currently in the top quarter of the viewport
+      const visible = entries.filter(e => e.isIntersecting)
+        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+      if (visible.length > 0) {
+        setActive(visible[0].target.id);
+      }
+    }, { rootMargin: '0px 0px -75% 0px', threshold: 0 });
+    headings.forEach(h => obs.observe(h));
+  }
+
+  // --- TOC search filter ---------------------------------------------------
+  const search = document.getElementById('tocSearch');
+  if (search) {
+    search.addEventListener('input', () => {
+      const q = search.value.trim().toLowerCase();
+      document.querySelectorAll('#toc li').forEach(li => {
+        const t = li.textContent.toLowerCase();
+        li.classList.toggle('hidden', q.length > 0 && !t.includes(q));
+      });
+    });
+  }
+
+  // --- Mobile TOC toggle ---------------------------------------------------
+  const tocToggle = document.getElementById('tocToggle');
+  const sidebar = document.getElementById('sidebar');
+  if (tocToggle) {
+    tocToggle.addEventListener('click', () => {
+      const open = sidebar.classList.toggle('amp-sidebar--open');
+      tocToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    // Close on TOC link click (mobile)
+    document.querySelectorAll('#toc a').forEach(a => {
+      a.addEventListener('click', () => {
+        if (window.innerWidth <= 980) {
+          sidebar.classList.remove('amp-sidebar--open');
+          tocToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    });
+  }
+
+  // --- Back-to-top button --------------------------------------------------
+  const backToTop = document.getElementById('backToTop');
+  window.addEventListener('scroll', () => {
+    backToTop.classList.toggle('visible', window.scrollY > 600);
+  }, { passive: true });
+  backToTop.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // --- Copy anchor link on heading anchor click ----------------------------
+  document.querySelectorAll('.anchor').forEach(a => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const url = window.location.origin + window.location.pathname + a.getAttribute('href');
+      navigator.clipboard?.writeText(url);
+      history.pushState(null, '', a.getAttribute('href'));
+      // Brief visual feedback
+      const orig = a.textContent;
+      a.textContent = '✓';
+      setTimeout(() => { a.textContent = orig; }, 800);
+    });
+  });
+})();
+</script>
+</body>
+</html>
