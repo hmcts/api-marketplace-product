@@ -29,7 +29,7 @@ The full principles are in [`product/principles.md`](../product/principles.md). 
 
 ## Related sections
 
-- [Product vision](../product/vision.md)
+- [Product vision](../product/vision/vision.md)
 - [Product principles](../product/principles.md)
 - [Roadmap](../product/roadmap.md)
 - [Recipes](../recipes/README.md)

@@ -5,6 +5,7 @@ The API Marketplace (AMp) is a self-serve marketplace for publishing, discoverin
 ## Repository structure
 
 ```
+platform/            — platform runbooks: what it takes to deploy on CNP
 product/             — vision, principles, roadmap
 product/discovery/   — discovery reports synthesising Miro thinking, reference portals, and open questions
 playbook/            — how to consume and produce APIs through the Marketplace
@@ -18,7 +19,7 @@ decisions/           — architecture decision records
 | What | Where |
 |------|-------|
 | **Discovery report (start here)** | [`product/discovery/2026-05-20-marketplace-discovery.md`](product/discovery/2026-05-20-marketplace-discovery.md) ([HTML view](product/discovery/2026-05-20-marketplace-discovery.html)) |
-| Product vision | [`product/vision.md`](product/vision.md) |
+| Product vision | [`product/vision/vision.md`](product/vision/vision.md) |
 | Product principles | [`product/principles.md`](product/principles.md) |
 | Roadmap | [`product/roadmap.md`](product/roadmap.md) |
 | Playbook | [`playbook/README.md`](playbook/README.md) |
@@ -26,6 +27,7 @@ decisions/           — architecture decision records
 | Producer guide | [`playbook/producers.md`](playbook/producers.md) |
 | Glossary | [`playbook/glossary.md`](playbook/glossary.md) |
 | Recipes | [`recipes/README.md`](recipes/README.md) |
+| CNP sandbox deployment | [`platform/cnp-sandbox-deployment.md`](platform/cnp-sandbox-deployment.md) |
 | Decision records | [`decisions/`](decisions/) |
 
 ## Working on the discovery report
