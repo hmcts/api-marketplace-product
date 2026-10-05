@@ -7,7 +7,7 @@
 | **Owner** | Duncan Crawford (acting) |
 | **Audience** | AMp product, design, engineering, governance |
 | **Location** | `api-amp/api-marketplace-product/product/discovery/` — co-located with the product corpus |
-| **Supersedes** | Sibling drafts in this repo (`product/vision.md`, `product/principles.md`, `playbook/`, etc.) where they disagree with the Miro canonical artefacts. Those earlier drafts remain useful for tone/wording but are no longer the authoritative source. |
+| **Supersedes** | Sibling drafts in this repo (`product/vision/vision.md`, `product/principles.md`, `playbook/`, etc.) where they disagree with the Miro canonical artefacts. Those earlier drafts remain useful for tone/wording but are no longer the authoritative source. |
 | **Source of truth for content corpus** | Miro board `uXjVJW-oswM=` |
 | **Next phase** | Resolve open questions (§11), then move to design |
 
